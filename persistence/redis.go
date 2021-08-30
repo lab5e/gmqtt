@@ -26,9 +26,8 @@ func NewRedis(config config.Config) (server.Persistence, error) {
 }
 
 type redis struct {
-	pool         *redigo.Pool
-	config       config.Config
-	onMsgDropped server.OnMsgDropped
+	pool   *redigo.Pool
+	config config.Config
 }
 
 func (r *redis) NewUnackStore(config config.Config, clientID string) (unack.Store, error) {
