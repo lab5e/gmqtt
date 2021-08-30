@@ -17,8 +17,7 @@ import (
 
 type MemorySuite struct {
 	suite.Suite
-	new server.NewPersistence
-	p   server.Persistence
+	p server.Persistence
 }
 
 func (s *MemorySuite) TestQueue() {
