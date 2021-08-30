@@ -3,8 +3,8 @@ package mem
 import (
 	"strings"
 
-	"github.com/DrmagicE/gmqtt"
-	"github.com/DrmagicE/gmqtt/persistence/subscription"
+	"github.com/lab5e/gmqtt"
+	"github.com/lab5e/gmqtt/persistence/subscription"
 )
 
 // topicTrie

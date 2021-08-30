@@ -13,9 +13,9 @@ import (
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 
-	"github.com/DrmagicE/gmqtt/config"
-	"github.com/DrmagicE/gmqtt/pkg/pidfile"
-	"github.com/DrmagicE/gmqtt/server"
+	"github.com/lab5e/gmqtt/config"
+	"github.com/lab5e/gmqtt/pkg/pidfile"
+	"github.com/lab5e/gmqtt/server"
 )
 
 var (

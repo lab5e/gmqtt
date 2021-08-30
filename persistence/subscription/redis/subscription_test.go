@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/DrmagicE/gmqtt"
+	"github.com/lab5e/gmqtt"
 )
 
 func TestEncodeDecodeSubscription(t *testing.T) {

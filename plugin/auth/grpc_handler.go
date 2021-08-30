@@ -11,7 +11,7 @@ import (
 	"go.uber.org/zap"
 	"gopkg.in/yaml.v2"
 
-	"github.com/DrmagicE/gmqtt/plugin/admin"
+	"github.com/lab5e/gmqtt/plugin/admin"
 )
 
 // List lists all accounts

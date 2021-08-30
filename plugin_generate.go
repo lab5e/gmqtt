@@ -29,7 +29,7 @@ import (
 const (
 	pluginFile = "./cmd/gmqttd/plugins.go"
 	pluginCfg  = "plugin_imports.yml"
-	importPath = "github.com/DrmagicE/gmqtt/plugin"
+	importPath = "github.com/lab5e/gmqtt/plugin"
 )
 
 type ymlCfg struct {

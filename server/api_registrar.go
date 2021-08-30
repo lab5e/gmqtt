@@ -18,7 +18,7 @@ import (
 	gcodes "google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials"
 
-	"github.com/DrmagicE/gmqtt/config"
+	"github.com/lab5e/gmqtt/config"
 )
 
 // APIRegistrar is the registrar for all gRPC servers and HTTP servers.

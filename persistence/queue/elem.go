@@ -6,9 +6,9 @@ import (
 	"errors"
 	"time"
 
-	"github.com/DrmagicE/gmqtt"
-	"github.com/DrmagicE/gmqtt/persistence/encoding"
-	"github.com/DrmagicE/gmqtt/pkg/packets"
+	"github.com/lab5e/gmqtt"
+	"github.com/lab5e/gmqtt/persistence/encoding"
+	"github.com/lab5e/gmqtt/pkg/packets"
 )
 
 type MessageWithID interface {

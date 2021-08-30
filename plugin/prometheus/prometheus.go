@@ -9,9 +9,9 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"go.uber.org/zap"
 
-	"github.com/DrmagicE/gmqtt/config"
-	"github.com/DrmagicE/gmqtt/persistence/subscription"
-	"github.com/DrmagicE/gmqtt/server"
+	"github.com/lab5e/gmqtt/config"
+	"github.com/lab5e/gmqtt/persistence/subscription"
+	"github.com/lab5e/gmqtt/server"
 )
 
 var _ server.Plugin = (*Prometheus)(nil)

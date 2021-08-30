@@ -3,8 +3,8 @@
 Admin plugin use [grpc-gateway](https://github.com/grpc-ecosystem/grpc-gateway) to provide both REST HTTP and GRPC APIs for integration with external systems.
 
 # API Doc
- 
-See [swagger](https://github.com/DrmagicE/gmqtt/blob/master/plugin/admin/swagger)
+
+See [swagger](https://github.com/lab5e/gmqtt/blob/master/plugin/admin/swagger)
 
 # Examples
 
@@ -66,7 +66,7 @@ Response:
 }
 ```
 
-## Publish Message 
+## Publish Message
 ```bash
 $ curl -X POST 127.0.0.1:8083/v1/publish -d '{"topic_name":"a","payload":"test","qos":1}'
 ```

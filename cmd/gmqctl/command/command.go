@@ -3,7 +3,7 @@ package command
 import (
 	"github.com/spf13/cobra"
 
-	gen_plugin "github.com/DrmagicE/gmqtt/cmd/gmqctl/command/gen-plugin"
+	gen_plugin "github.com/lab5e/gmqtt/cmd/gmqctl/command/gen-plugin"
 )
 
 // Gen is the command for code generator.

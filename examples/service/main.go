@@ -12,12 +12,12 @@ import (
 
 	"go.uber.org/zap"
 
-	"github.com/DrmagicE/gmqtt"
-	_ "github.com/DrmagicE/gmqtt/persistence"
-	"github.com/DrmagicE/gmqtt/persistence/subscription"
-	"github.com/DrmagicE/gmqtt/pkg/packets"
-	"github.com/DrmagicE/gmqtt/server"
-	_ "github.com/DrmagicE/gmqtt/topicalias/fifo"
+	"github.com/lab5e/gmqtt"
+	_ "github.com/lab5e/gmqtt/persistence"
+	"github.com/lab5e/gmqtt/persistence/subscription"
+	"github.com/lab5e/gmqtt/pkg/packets"
+	"github.com/lab5e/gmqtt/server"
+	_ "github.com/lab5e/gmqtt/topicalias/fifo"
 )
 
 func main() {

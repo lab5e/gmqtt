@@ -7,11 +7,11 @@ import (
 	redigo "github.com/gomodule/redigo/redis"
 	"go.uber.org/zap"
 
-	"github.com/DrmagicE/gmqtt/pkg/codes"
-	"github.com/DrmagicE/gmqtt/pkg/packets"
-	"github.com/DrmagicE/gmqtt/server"
+	"github.com/lab5e/gmqtt/pkg/codes"
+	"github.com/lab5e/gmqtt/pkg/packets"
+	"github.com/lab5e/gmqtt/server"
 
-	"github.com/DrmagicE/gmqtt/persistence/queue"
+	"github.com/lab5e/gmqtt/persistence/queue"
 )
 
 const (

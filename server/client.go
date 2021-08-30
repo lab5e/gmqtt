@@ -21,14 +21,14 @@ import (
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 
-	"github.com/DrmagicE/gmqtt"
-	"github.com/DrmagicE/gmqtt/config"
-	"github.com/DrmagicE/gmqtt/persistence/queue"
-	"github.com/DrmagicE/gmqtt/persistence/subscription"
-	"github.com/DrmagicE/gmqtt/persistence/unack"
-	"github.com/DrmagicE/gmqtt/pkg/bitmap"
-	"github.com/DrmagicE/gmqtt/pkg/codes"
-	"github.com/DrmagicE/gmqtt/pkg/packets"
+	"github.com/lab5e/gmqtt"
+	"github.com/lab5e/gmqtt/config"
+	"github.com/lab5e/gmqtt/persistence/queue"
+	"github.com/lab5e/gmqtt/persistence/subscription"
+	"github.com/lab5e/gmqtt/persistence/unack"
+	"github.com/lab5e/gmqtt/pkg/bitmap"
+	"github.com/lab5e/gmqtt/pkg/codes"
+	"github.com/lab5e/gmqtt/pkg/packets"
 )
 
 // Error

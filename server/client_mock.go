@@ -5,9 +5,9 @@
 package server
 
 import (
-	gmqtt "github.com/DrmagicE/gmqtt"
-	packets "github.com/DrmagicE/gmqtt/pkg/packets"
 	gomock "github.com/golang/mock/gomock"
+	gmqtt "github.com/lab5e/gmqtt"
+	packets "github.com/lab5e/gmqtt/pkg/packets"
 	net "net"
 	reflect "reflect"
 	time "time"

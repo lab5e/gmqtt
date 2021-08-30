@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/DrmagicE/gmqtt/pkg/codes"
+	"github.com/lab5e/gmqtt/pkg/codes"
 	"github.com/stretchr/testify/assert"
 )
 

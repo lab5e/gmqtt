@@ -1,4 +1,4 @@
-module github.com/DrmagicE/gmqtt
+module github.com/lab5e/gmqtt
 
 go 1.14
 
@@ -21,8 +21,9 @@ require (
 	github.com/stretchr/testify v1.6.1
 	go.uber.org/zap v1.13.0
 	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
-	golang.org/x/sys v0.0.0-20200323222414-85ca7c5b95cd
-	golang.org/x/tools v0.0.0-20191112195655-aa38f8e97acc // indirect
+	golang.org/x/mod v0.5.0 // indirect
+	golang.org/x/sys v0.0.0-20210823070655-63515b42dcdf
+	golang.org/x/tools v0.1.5 // indirect
 	google.golang.org/genproto v0.0.0-20200526211855-cb27e3aa2013
 	google.golang.org/grpc v1.34.0
 	google.golang.org/protobuf v1.25.0

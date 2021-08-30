@@ -1,11 +1,11 @@
 package server
 
 import (
-	"github.com/DrmagicE/gmqtt/config"
-	"github.com/DrmagicE/gmqtt/persistence/queue"
-	"github.com/DrmagicE/gmqtt/persistence/session"
-	"github.com/DrmagicE/gmqtt/persistence/subscription"
-	"github.com/DrmagicE/gmqtt/persistence/unack"
+	"github.com/lab5e/gmqtt/config"
+	"github.com/lab5e/gmqtt/persistence/queue"
+	"github.com/lab5e/gmqtt/persistence/session"
+	"github.com/lab5e/gmqtt/persistence/subscription"
+	"github.com/lab5e/gmqtt/persistence/unack"
 )
 
 type NewPersistence func(config config.Config) (Persistence, error)

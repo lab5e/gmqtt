@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/DrmagicE/gmqtt/pkg/codes"
+	"github.com/lab5e/gmqtt/pkg/codes"
 )
 
 // Pubcomp represents the MQTT Pubcomp  packet

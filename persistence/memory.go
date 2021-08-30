@@ -1,16 +1,16 @@
 package persistence
 
 import (
-	"github.com/DrmagicE/gmqtt/config"
-	"github.com/DrmagicE/gmqtt/persistence/queue"
-	mem_queue "github.com/DrmagicE/gmqtt/persistence/queue/mem"
-	"github.com/DrmagicE/gmqtt/persistence/session"
-	mem_session "github.com/DrmagicE/gmqtt/persistence/session/mem"
-	"github.com/DrmagicE/gmqtt/persistence/subscription"
-	mem_sub "github.com/DrmagicE/gmqtt/persistence/subscription/mem"
-	"github.com/DrmagicE/gmqtt/persistence/unack"
-	mem_unack "github.com/DrmagicE/gmqtt/persistence/unack/mem"
-	"github.com/DrmagicE/gmqtt/server"
+	"github.com/lab5e/gmqtt/config"
+	"github.com/lab5e/gmqtt/persistence/queue"
+	mem_queue "github.com/lab5e/gmqtt/persistence/queue/mem"
+	"github.com/lab5e/gmqtt/persistence/session"
+	mem_session "github.com/lab5e/gmqtt/persistence/session/mem"
+	"github.com/lab5e/gmqtt/persistence/subscription"
+	mem_sub "github.com/lab5e/gmqtt/persistence/subscription/mem"
+	"github.com/lab5e/gmqtt/persistence/unack"
+	mem_unack "github.com/lab5e/gmqtt/persistence/unack/mem"
+	"github.com/lab5e/gmqtt/server"
 )
 
 func init() {

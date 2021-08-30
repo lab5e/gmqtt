@@ -7,9 +7,9 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/DrmagicE/gmqtt/config"
-	"github.com/DrmagicE/gmqtt/plugin/admin"
-	"github.com/DrmagicE/gmqtt/server"
+	"github.com/lab5e/gmqtt/config"
+	"github.com/lab5e/gmqtt/plugin/admin"
+	"github.com/lab5e/gmqtt/server"
 )
 
 func init() {

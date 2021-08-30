@@ -5,8 +5,8 @@
 package retained
 
 import (
-	gmqtt "github.com/DrmagicE/gmqtt"
 	gomock "github.com/golang/mock/gomock"
+	gmqtt "github.com/lab5e/gmqtt"
 	reflect "reflect"
 )
 

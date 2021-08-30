@@ -2,8 +2,8 @@ FROM golang:alpine AS builder
 
 RUN apk add make git
 
-ADD . /go/src/github.com/DrmagicE/gmqtt
-WORKDIR /go/src/github.com/DrmagicE/gmqtt
+ADD . /go/src/github.com/lab5e/gmqtt
+WORKDIR /go/src/github.com/lab5e/gmqtt
 
 ENV GO111MODULE on
 #ENV GOPROXY https://goproxy.cn
@@ -15,7 +15,7 @@ RUN make binary
 FROM alpine:3.12
 
 WORKDIR /gmqttd
-COPY --from=builder /go/src/github.com/DrmagicE/gmqtt/build/gmqttd .
+COPY --from=builder /go/src/github.com/lab5e/gmqtt/build/gmqttd .
 RUN mkdir /etc/gmqtt
 COPY ./cmd/gmqttd/default_config.yml /etc/gmqtt/gmqttd.yml
 ENV PATH=$PATH:/gmqttd

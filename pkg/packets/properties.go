@@ -7,7 +7,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/DrmagicE/gmqtt/pkg/codes"
+	"github.com/lab5e/gmqtt/pkg/codes"
 )
 
 const (

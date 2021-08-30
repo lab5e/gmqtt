@@ -3,16 +3,16 @@ package persistence
 import (
 	redigo "github.com/gomodule/redigo/redis"
 
-	"github.com/DrmagicE/gmqtt/config"
-	"github.com/DrmagicE/gmqtt/persistence/queue"
-	redis_queue "github.com/DrmagicE/gmqtt/persistence/queue/redis"
-	"github.com/DrmagicE/gmqtt/persistence/session"
-	redis_sess "github.com/DrmagicE/gmqtt/persistence/session/redis"
-	"github.com/DrmagicE/gmqtt/persistence/subscription"
-	redis_sub "github.com/DrmagicE/gmqtt/persistence/subscription/redis"
-	"github.com/DrmagicE/gmqtt/persistence/unack"
-	redis_unack "github.com/DrmagicE/gmqtt/persistence/unack/redis"
-	"github.com/DrmagicE/gmqtt/server"
+	"github.com/lab5e/gmqtt/config"
+	"github.com/lab5e/gmqtt/persistence/queue"
+	redis_queue "github.com/lab5e/gmqtt/persistence/queue/redis"
+	"github.com/lab5e/gmqtt/persistence/session"
+	redis_sess "github.com/lab5e/gmqtt/persistence/session/redis"
+	"github.com/lab5e/gmqtt/persistence/subscription"
+	redis_sub "github.com/lab5e/gmqtt/persistence/subscription/redis"
+	"github.com/lab5e/gmqtt/persistence/unack"
+	redis_unack "github.com/lab5e/gmqtt/persistence/unack/redis"
+	"github.com/lab5e/gmqtt/server"
 )
 
 func init() {

@@ -10,13 +10,13 @@ import (
 
 	"go.uber.org/zap"
 
-	"github.com/DrmagicE/gmqtt"
-	"github.com/DrmagicE/gmqtt/config"
-	_ "github.com/DrmagicE/gmqtt/persistence"
-	"github.com/DrmagicE/gmqtt/pkg/codes"
-	"github.com/DrmagicE/gmqtt/pkg/packets"
-	"github.com/DrmagicE/gmqtt/server"
-	_ "github.com/DrmagicE/gmqtt/topicalias/fifo"
+	"github.com/lab5e/gmqtt"
+	"github.com/lab5e/gmqtt/config"
+	_ "github.com/lab5e/gmqtt/persistence"
+	"github.com/lab5e/gmqtt/pkg/codes"
+	"github.com/lab5e/gmqtt/pkg/packets"
+	"github.com/lab5e/gmqtt/server"
+	_ "github.com/lab5e/gmqtt/topicalias/fifo"
 )
 
 var validUser = map[string]string{

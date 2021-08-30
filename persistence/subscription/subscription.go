@@ -4,8 +4,8 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/DrmagicE/gmqtt"
-	"github.com/DrmagicE/gmqtt/pkg/packets"
+	"github.com/lab5e/gmqtt"
+	"github.com/lab5e/gmqtt/pkg/packets"
 )
 
 // IterationType specifies the types of subscription that will be iterated.

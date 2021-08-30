@@ -1,7 +1,7 @@
 package session
 
 import (
-	"github.com/DrmagicE/gmqtt"
+	"github.com/lab5e/gmqtt"
 )
 
 // IterateFn is the callback function used by Iterate()

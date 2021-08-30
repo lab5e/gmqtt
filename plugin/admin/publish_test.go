@@ -8,9 +8,9 @@ import (
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc/status"
 
-	"github.com/DrmagicE/gmqtt"
-	"github.com/DrmagicE/gmqtt/pkg/packets"
-	"github.com/DrmagicE/gmqtt/server"
+	"github.com/lab5e/gmqtt"
+	"github.com/lab5e/gmqtt/pkg/packets"
+	"github.com/lab5e/gmqtt/server"
 )
 
 func TestPublisher_Publish(t *testing.T) {

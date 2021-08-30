@@ -5,8 +5,8 @@ import (
 
 	"go.uber.org/zap"
 
-	"github.com/DrmagicE/gmqtt"
-	"github.com/DrmagicE/gmqtt/persistence/queue"
+	"github.com/lab5e/gmqtt"
+	"github.com/lab5e/gmqtt/persistence/queue"
 )
 
 // queueNotifier implements queue.Notifier interface.

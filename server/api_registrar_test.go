@@ -15,7 +15,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
 
-	"github.com/DrmagicE/gmqtt/config"
+	"github.com/lab5e/gmqtt/config"
 )
 
 func TestAPIRegistrar_serveAPIServer(t *testing.T) {
@@ -266,8 +266,9 @@ func TestBuildTLSConfig(t *testing.T) {
 		a.NoError(err)
 		block, _ := pem.Decode(certPEM)
 		cert, err := x509.ParseCertificate(block.Bytes)
+		a.NoError(err)
 		_, err = cert.Verify(opts)
-		a.Nil(err)
+		a.NoError(err)
 	})
 
 }

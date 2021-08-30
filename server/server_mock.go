@@ -6,8 +6,8 @@ package server
 
 import (
 	context "context"
-	config "github.com/DrmagicE/gmqtt/config"
 	gomock "github.com/golang/mock/gomock"
+	config "github.com/lab5e/gmqtt/config"
 	reflect "reflect"
 )
 

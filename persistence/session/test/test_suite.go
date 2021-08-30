@@ -7,8 +7,8 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/DrmagicE/gmqtt"
-	"github.com/DrmagicE/gmqtt/persistence/session"
+	"github.com/lab5e/gmqtt"
+	"github.com/lab5e/gmqtt/persistence/session"
 )
 
 func TestSuite(t *testing.T, store session.Store) {

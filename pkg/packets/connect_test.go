@@ -6,7 +6,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/DrmagicE/gmqtt/pkg/codes"
+	"github.com/lab5e/gmqtt/pkg/codes"
 )
 
 func TestReadConnectPacketErr_V5(t *testing.T) {

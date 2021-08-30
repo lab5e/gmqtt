@@ -1,8 +1,8 @@
 package server
 
 import (
-	"github.com/DrmagicE/gmqtt/config"
-	"github.com/DrmagicE/gmqtt/pkg/packets"
+	"github.com/lab5e/gmqtt/config"
+	"github.com/lab5e/gmqtt/pkg/packets"
 )
 
 type NewTopicAliasManager func(config config.Config, maxAlias uint16, clientID string) TopicAliasManager

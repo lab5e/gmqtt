@@ -5,12 +5,12 @@
 package server
 
 import (
-	config "github.com/DrmagicE/gmqtt/config"
-	queue "github.com/DrmagicE/gmqtt/persistence/queue"
-	session "github.com/DrmagicE/gmqtt/persistence/session"
-	subscription "github.com/DrmagicE/gmqtt/persistence/subscription"
-	unack "github.com/DrmagicE/gmqtt/persistence/unack"
 	gomock "github.com/golang/mock/gomock"
+	config "github.com/lab5e/gmqtt/config"
+	queue "github.com/lab5e/gmqtt/persistence/queue"
+	session "github.com/lab5e/gmqtt/persistence/session"
+	subscription "github.com/lab5e/gmqtt/persistence/subscription"
+	unack "github.com/lab5e/gmqtt/persistence/unack"
 	reflect "reflect"
 )
 

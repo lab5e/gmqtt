@@ -6,7 +6,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/DrmagicE/gmqtt/cmd/gmqctl/command"
+	"github.com/lab5e/gmqtt/cmd/gmqctl/command"
 )
 
 var (
