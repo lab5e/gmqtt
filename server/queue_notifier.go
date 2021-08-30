@@ -16,7 +16,7 @@ type queueNotifier struct {
 	cli      *client
 }
 
-// defaultNotifier is used to init the notifier when using a persistent session store (e.g redis) which can load session data
+// defaultNotifier is used to init the notifier when using a persistent session store which can load session data
 // while bootstrapping.
 func defaultNotifier(dropHook OnMsgDropped, sts *statsManager, clientID string) *queueNotifier {
 	return &queueNotifier{
