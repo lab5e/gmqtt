@@ -4,8 +4,10 @@ import (
 	"github.com/pkg/errors"
 )
 
+// PersistenceType is the configuration option for the persistence layer
 type PersistenceType = string
 
+// Known persistence layer implementations
 const (
 	PersistenceTypeMemory PersistenceType = "memory"
 )
@@ -24,6 +26,7 @@ type Persistence struct {
 	Type PersistenceType `yaml:"type"`
 }
 
+// Validate validates the configuration
 func (p *Persistence) Validate() error {
 	if p.Type != PersistenceTypeMemory {
 		return errors.New("invalid persistence type")

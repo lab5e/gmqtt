@@ -7,13 +7,14 @@ import (
 	"github.com/lab5e/lmqtt/pkg/packets"
 )
 
+// String constants for accepted delivery methods
 const (
 	Overlap  = "overlap"
 	OnlyOnce = "onlyonce"
 )
 
 var (
-	// DefaultMQTTConfig
+	// DefaultMQTTConfig is the default config for MQTT
 	DefaultMQTTConfig = MQTT{
 		SessionExpiry:              2 * time.Hour,
 		SessionExpiryCheckInterval: 20 * time.Second,
@@ -36,6 +37,7 @@ var (
 	}
 )
 
+// MQTT is the configuration structure for the MQTT options
 type MQTT struct {
 	// SessionExpiry is the maximum session expiry interval in seconds.
 	SessionExpiry time.Duration `yaml:"session_expiry"`
@@ -91,6 +93,7 @@ type MQTT struct {
 	AllowZeroLenClientID bool `yaml:"allow_zero_length_clientid"`
 }
 
+// Validate validates the configuration
 func (c MQTT) Validate() error {
 	if c.MaximumQoS > packets.Qos2 {
 		return fmt.Errorf("invalid maximum_qos: %d", c.MaximumQoS)

@@ -35,12 +35,8 @@ func RegisterDefaultPluginConfig(name string, config Configuration) {
 // If config file is not provided, gmqttd will start with DefaultConfig.
 func DefaultConfig() Config {
 	c := Config{
-		Listeners: DefaultListeners,
-		MQTT:      DefaultMQTTConfig,
-		Log: LogConfig{
-			Level:  "info",
-			Format: "text",
-		},
+		Listeners:         DefaultListeners,
+		MQTT:              DefaultMQTTConfig,
 		Persistence:       DefaultPersistenceConfig,
 		TopicAliasManager: DefaultTopicAliasManager,
 	}
@@ -48,6 +44,7 @@ func DefaultConfig() Config {
 	return c
 }
 
+// DefaultListeners are the default listeners for the server
 var DefaultListeners = []*ListenerConfig{
 	{
 		Address:    "0.0.0.0:1883",
@@ -58,41 +55,17 @@ var DefaultListeners = []*ListenerConfig{
 	},
 }
 
-// LogConfig is use to configure the log behaviors.
-type LogConfig struct {
-	// Level is the log level. Possible values: debug, info, warn, error
-	Level string `yaml:"level"`
-	// Format is the log format. Possible values: json, text
-	Format string `yaml:"format"`
-	// DumpPacket indicates whether to dump MQTT packet in debug level.
-	DumpPacket bool `yaml:"dump_packet"`
-}
-
-func (l LogConfig) Validate() error {
-	if l.Level != "debug" && l.Level != "info" && l.Level != "warn" && l.Level != "error" {
-		return fmt.Errorf("invalid log level: %s", l.Level)
-	}
-	if l.Format != "json" && l.Format != "text" {
-		return fmt.Errorf("invalid log format: %s", l.Format)
-	}
-	return nil
-}
-
 // Config is the configration for gmqttd.
 type Config struct {
 	Listeners         []*ListenerConfig `yaml:"listeners"`
 	MQTT              MQTT              `yaml:"mqtt,omitempty"`
-	Log               LogConfig         `yaml:"log"`
 	ConfigDir         string            `yaml:"config_dir"`
 	Persistence       Persistence       `yaml:"persistence"`
 	TopicAliasManager TopicAliasManager `yaml:"topic_alias_manager"`
 	DumpPacket        bool              `yaml:"dump_packet"`
 }
 
-type GRPC struct {
-	Endpoint string `yaml:"endpoint"`
-}
-
+// TLSOptions are the TLS options for the server
 type TLSOptions struct {
 	// CACert is the trust CA certificate file.
 	CACert string `yaml:"cacert"`
@@ -104,11 +77,13 @@ type TLSOptions struct {
 	Verify bool `yaml:"verify"`
 }
 
+// ListenerConfig is the (TCP) listener config
 type ListenerConfig struct {
 	Address     string `yaml:"address"`
 	*TLSOptions `yaml:"tls"`
 }
 
+// UnmarshalYAML unmarshal YAML from a source
 func (c *Config) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	type config Config
 	raw := config(DefaultConfig())
@@ -123,11 +98,8 @@ func (c *Config) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	return nil
 }
 
+// Validate validates the config
 func (c Config) Validate() (err error) {
-	err = c.Log.Validate()
-	if err != nil {
-		return err
-	}
 	err = c.MQTT.Validate()
 	if err != nil {
 		return err
@@ -139,6 +111,7 @@ func (c Config) Validate() (err error) {
 	return nil
 }
 
+// ParseConfig parses the configuration file
 func ParseConfig(filePath string) (c Config, err error) {
 	if filePath == "" {
 		return DefaultConfig(), nil

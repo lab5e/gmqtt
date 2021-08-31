@@ -1,7 +1,9 @@
 package config
 
+// TopicAliasType is a type for topic alias factories
 type TopicAliasType = string
 
+// Topic alias type managerss
 const (
 	TopicAliasMgrTypeFIFO TopicAliasType = "fifo"
 )
