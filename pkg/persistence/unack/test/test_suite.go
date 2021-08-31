@@ -11,8 +11,10 @@ import (
 )
 
 var (
+	// ServerConfig is the default server config used in the tests
 	ServerConfig = config.Config{}
-	ClientID     = "cid"
+	// ClientID is the client ID used in the tests
+	ClientID = "cid"
 )
 
 func Suite(t *testing.T, store unack.Store) {

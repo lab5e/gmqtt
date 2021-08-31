@@ -14,14 +14,16 @@ type IterationType byte
 const (
 	// TypeSYS represents system topic, which start with '$'.
 	TypeSYS IterationType = 1 << iota
-	// TypeSYS represents shared topic, which start with '$share/'.
+	// TypeShared represents shared topic, which start with '$share/'.
 	TypeShared
 	// TypeNonShared represents non-shared topic.
 	TypeNonShared
+	// TypeAll is all types
 	TypeAll = TypeSYS | TypeShared | TypeNonShared
 )
 
 var (
+	// ErrClientNotExists is returned when the client does not exist
 	ErrClientNotExists = errors.New("client not exists")
 )
 
