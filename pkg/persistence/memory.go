@@ -17,6 +17,7 @@ func init() {
 	lmqtt.RegisterPersistenceFactory("memory", NewMemory)
 }
 
+// NewMemory creates a new memory store implementation of lmqtt.Persistence
 func NewMemory(config config.Config) (lmqtt.Persistence, error) {
 	return &memory{}, nil
 }

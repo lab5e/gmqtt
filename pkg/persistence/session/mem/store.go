@@ -9,6 +9,7 @@ import (
 
 var _ session.Store = (*Store)(nil)
 
+// New creates a memory-backed session store
 func New() *Store {
 	return &Store{
 		mu:   sync.Mutex{},
@@ -16,11 +17,13 @@ func New() *Store {
 	}
 }
 
+// Store is the memory store type
 type Store struct {
 	mu   sync.Mutex
 	sess map[string]*entities.Session
 }
 
+// Set sets a new session in the store
 func (s *Store) Set(session *entities.Session) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -28,6 +31,7 @@ func (s *Store) Set(session *entities.Session) error {
 	return nil
 }
 
+// Remove removes a session from the store
 func (s *Store) Remove(clientID string) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -35,16 +39,19 @@ func (s *Store) Remove(clientID string) error {
 	return nil
 }
 
+// Get returns a session from the store for the specified client
 func (s *Store) Get(clientID string) (*entities.Session, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	return s.sess[clientID], nil
 }
 
+// GetAll returns all sessions. This returns nil for the memory store
 func (s *Store) GetAll() ([]*entities.Session, error) {
 	return nil, nil
 }
 
+// SetSessionExpiry sets the expiration time for the sessions
 func (s *Store) SetSessionExpiry(clientID string, expiry uint32) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -55,6 +62,7 @@ func (s *Store) SetSessionExpiry(clientID string, expiry uint32) error {
 	return nil
 }
 
+// Iterate iterates over the sessions in the store
 func (s *Store) Iterate(fn session.IterateFn) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()

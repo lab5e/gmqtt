@@ -6,6 +6,7 @@ import "github.com/lab5e/lmqtt/pkg/entities"
 // Return false means to stop the iteration.
 type IterateFn func(session *entities.Session) bool
 
+// Store is the session store interface
 type Store interface {
 	Set(session *entities.Session) error
 	Remove(clientID string) error
