@@ -30,6 +30,7 @@ var (
 // MatchType specifies what match operation will be performed during the iteration.
 type MatchType byte
 
+// Match types
 const (
 	MatchName MatchType = 1 << iota
 	MatchFilter

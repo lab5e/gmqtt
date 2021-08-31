@@ -269,6 +269,7 @@ type OnBasicAuthWrapper func(OnBasicAuth) OnBasicAuth
 // OnEnhancedAuth will be called when receive v5 connect packet with auth method property.
 type OnEnhancedAuth func(ctx context.Context, client Client, req *ConnectRequest) (resp *EnhancedAuthResponse, err error)
 
+// EnhancedAuthResponse is returned by the OnEnhancedAuth hook
 type EnhancedAuthResponse struct {
 	Continue bool
 	OnAuth   OnAuth
@@ -276,12 +277,13 @@ type EnhancedAuthResponse struct {
 }
 type OnEnhancedAuthWrapper func(OnEnhancedAuth) OnEnhancedAuth
 
+// AuthRequest is the parameters for the OnAuth hook
 type AuthRequest struct {
 	Auth    *packets.Auth
 	Options *AuthOptions
 }
 
-// ReAuthResponse is the response of the OnAuth hook.
+// AuthResponse is the response of the OnAuth hook.
 type AuthResponse struct {
 	// Continue indicate that whether more authentication data is needed.
 	Continue bool
