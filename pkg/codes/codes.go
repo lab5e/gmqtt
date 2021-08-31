@@ -20,10 +20,10 @@ const (
 	V3NotAuthorized               = 0x05
 )
 
-//  Code is the MQTT reason code
+// Code is the MQTT reason code
 type Code = byte
 
-//  There are the possible reason Code in v5
+// There are the possible reason Code in v5
 const (
 	Success                     Code = 0x00
 	NormalDisconnection         Code = 0x00
@@ -96,6 +96,8 @@ func (e *Error) Error() string {
 	}
 	return fmt.Sprintf("operation error: Code = %x, reasonString: %s", e.Code, e.ReasonString)
 }
+
+// NewError creates a new error that wraps the reason code
 func NewError(code Code) *Error {
 	return &Error{Code: code}
 }
