@@ -14,7 +14,7 @@ import (
 // This is stub handlers for the simple server.
 
 func onAccept(ctx context.Context, conn net.Conn) bool {
-	log.Printf("onAccept: %s", conn)
+	log.Printf("onAccept: %s", conn.RemoteAddr())
 	return true
 }
 
@@ -55,7 +55,7 @@ func onMsgArrived(ctx context.Context, client lmqtt.Client, req *lmqtt.MsgArrive
 }
 
 func onBasicAuth(ctx context.Context, client lmqtt.Client, req *lmqtt.ConnectRequest) error {
-	log.Printf("onBasicAuth[%s] req=%+v", client.ClientOptions().ClientID, req)
+	log.Printf("onBasicAuth[%s] username=%s, password=%s", client.ClientOptions().ClientID, string(req.Connect.Username), string(req.Connect.Password))
 	if cfg.Username != "" && cfg.Password != "" {
 		if cfg.Username != string(req.Connect.Username) ||
 			cfg.Password != string(req.Connect.Password) {
