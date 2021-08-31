@@ -18,11 +18,11 @@ help:
 	@echo 'targets:'
 	@egrep '^(.+)\:\ .*#\ (.+)' ${MAKEFILE_LIST} | sed 's/:.*#/#/' | column -t -c 2 -s '#'
 
+sample:
+	@cd cmd/server && go build -o ../../bin/server
+
 # clean, format, build and unit test
-all:
-	make clean-all
-	make fmt
-	make test
+all: clean-all fmt test sample
 
 # Print useful environment variables to stdout
 env:
