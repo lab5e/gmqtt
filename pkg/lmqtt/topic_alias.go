@@ -5,6 +5,7 @@ import (
 	"github.com/lab5e/lmqtt/pkg/packets"
 )
 
+// NewTopicAliasManager is a factory function for a TopicAliasManager instance
 type NewTopicAliasManager func(config config.Config, maxAlias uint16, clientID string) TopicAliasManager
 
 // TopicAliasManager manage the topic alias for a V5 client.
