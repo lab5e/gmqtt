@@ -235,11 +235,11 @@ func (db *TrieDB) GetStats() subscription.Stats {
 
 // GetClientStatsLocked the non thread-safe version of GetClientStats
 func (db *TrieDB) GetClientStatsLocked(clientID string) (subscription.Stats, error) {
-	if stats, ok := db.clientStats[clientID]; !ok {
+	stats, ok := db.clientStats[clientID]
+	if !ok {
 		return subscription.Stats{}, subscription.ErrClientNotExists
-	} else {
-		return *stats, nil
 	}
+	return *stats, nil
 }
 
 func (db *TrieDB) GetClientStats(clientID string) (subscription.Stats, error) {

@@ -465,16 +465,16 @@ func (s *statsManager) GetGlobalStats() GlobalStats {
 func (s *statsManager) GetClientStats(clientID string) (ClientStats, bool) {
 	s.clientMu.Lock()
 	defer s.clientMu.Unlock()
-	if stats := s.clientStats[clientID]; stats == nil {
+	stats := s.clientStats[clientID]
+	if stats == nil {
 		return ClientStats{}, false
-	} else {
-		s, _ := s.subStatsReader.GetClientStats(clientID)
-		return ClientStats{
-			PacketStats:       *stats.PacketStats.copy(),
-			MessageStats:      *stats.MessageStats.copy(),
-			SubscriptionStats: s,
-		}, true
 	}
+	ss, _ := s.subStatsReader.GetClientStats(clientID)
+	return ClientStats{
+		PacketStats:       *stats.PacketStats.copy(),
+		MessageStats:      *stats.MessageStats.copy(),
+		SubscriptionStats: ss,
+	}, true
 
 }
 
