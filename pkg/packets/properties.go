@@ -10,6 +10,7 @@ import (
 	"github.com/lab5e/lmqtt/pkg/codes"
 )
 
+// Payload format bytes
 const (
 	PropPayloadFormat          byte = 0x01
 	PropMessageExpiry          byte = 0x02
@@ -44,6 +45,7 @@ func errMorethanOnce(property byte) error {
 	return fmt.Errorf("property %v presents more than once", property)
 }
 
+// UserProperty is user-defined properties
 type UserProperty struct {
 	K []byte
 	V []byte
@@ -191,6 +193,7 @@ func (p *Properties) String() string {
 	return strings.Join(str, ", ")
 }
 
+// PackWillProperties encodes the will properties into a byte buffer
 func (p *Properties) PackWillProperties(bufw *bytes.Buffer) {
 	newBufw := &bytes.Buffer{}
 	defer func() {
@@ -272,6 +275,7 @@ func (p *Properties) Pack(bufw *bytes.Buffer, packetType byte) {
 	propertyWriteByte(PropSharedSubAvailable, p.SharedSubAvailable, newBufw)
 }
 
+// UnpackWillProperties decodes the will properties from a byte buffer
 func (p *Properties) UnpackWillProperties(bufr *bytes.Buffer) error {
 	var err error
 	length, err := EncodeRemainLength(bufr)
@@ -489,6 +493,7 @@ func ValidateID(packetType byte, i byte) bool {
 	return ok
 }
 
+// ValidateCode validates the code. This function will always return true.
 func ValidateCode(packType byte, code byte) bool {
 	return true
 }

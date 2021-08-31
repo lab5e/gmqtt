@@ -16,9 +16,10 @@ var (
 	ErrInvalUTF8String = errors.New("invalid utf-8 string")
 )
 
-// MQTT Version
+// Version is the MQTT Version
 type Version = byte
 
+// QoS is the Quality of Service setting in MQTT
 type QoS = byte
 
 var version2protoName = map[Version][]byte{
@@ -27,15 +28,17 @@ var version2protoName = map[Version][]byte{
 	Version5:   {'M', 'Q', 'T', 'T'},
 }
 
+// Version numbers for MQTT
 const (
 	Version31  Version = 0x03
 	Version311 Version = 0x04
 	Version5   Version = 0x05
-	// The maximum packet size of a MQTT packet
-	MaximumSize = 268435456
 )
 
-//Packet type
+// MaximumSize is the maximum packet size of a MQTT packet
+const MaximumSize = 268435456
+
+//Packet types
 const (
 	RESERVED = iota
 	CONNECT
@@ -71,26 +74,30 @@ const (
 	FlagPubrel      = 2
 )
 
-//PacketID is the type of packet identifier
+// PacketID is the type of packet identifier
 type PacketID = uint16
 
-//Max & min packet ID
+// Max & min packet ID
 const (
 	MaxPacketID PacketID = 65535
 	MinPacketID PacketID = 1
 )
 
+// PayloadFormat is the payload formats supported
 type PayloadFormat = byte
 
+// Payload format constants
 const (
 	PayloadFormatBytes  PayloadFormat = 0
 	PayloadFormatString PayloadFormat = 1
 )
 
+// IsVersion3X returns true if the version byte is 3.x
 func IsVersion3X(v Version) bool {
 	return v == Version311 || v == Version31
 }
 
+// IsVersion5 returns true if the version byte is 5.x
 func IsVersion5(v Version) bool {
 	return v == Version5
 }
@@ -172,6 +179,7 @@ func NewReader(r io.Reader) *Reader {
 	return &Reader{bufr: bufio.NewReaderSize(r, 2048), version: Version311}
 }
 
+// SetVersion sets the version
 func (r *Reader) SetVersion(version Version) {
 	r.version = version
 }
@@ -251,8 +259,6 @@ func (fh *FixHeader) Pack(w io.Writer) error {
 	return err
 }
 
-//DecodeRemainLength 将remain length 转成byte表示
-//
 //DecodeRemainLength puts the length int into bytes
 func DecodeRemainLength(length int) ([]byte, error) {
 	var result []byte
@@ -284,9 +290,8 @@ func DecodeRemainLength(length int) ([]byte, error) {
 	return result, nil
 }
 
-// EncodeRemainLength 读remainLength,如果格式错误返回 error
-//
-// EncodeRemainLength reads the remain length bytes from bufio.Reader and returns length int.
+// EncodeRemainLength reads the remain length bytes from bufio.Reader and
+// returns length int.
 func EncodeRemainLength(r io.ByteReader) (int, error) {
 	var vbi uint32
 	var multiplier uint32
@@ -307,7 +312,8 @@ func EncodeRemainLength(r io.ByteReader) (int, error) {
 	return int(vbi), nil
 }
 
-// EncodeUTF8String encodes the bytes into UTF-8 encoded strings, returns the encoded bytes, bytes size and error.
+// EncodeUTF8String encodes the bytes into UTF-8 encoded strings, returns the
+// encoded bytes, bytes size and error.
 func EncodeUTF8String(buf []byte) (b []byte, size int, err error) {
 	buflen := len(buf)
 	if buflen > 65535 {
