@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/lab5e/gmqtt/pkg/codes"
+	"github.com/lab5e/lmqtt/pkg/codes"
 )
 
 // Puback represents the MQTT Puback  packet

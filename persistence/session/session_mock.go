@@ -6,7 +6,7 @@ package session
 
 import (
 	gomock "github.com/golang/mock/gomock"
-	gmqtt "github.com/lab5e/gmqtt"
+	entities "github.com/lab5e/lmqtt/pkg/entities"
 	reflect "reflect"
 )
 
@@ -34,7 +34,7 @@ func (m *MockStore) EXPECT() *MockStoreMockRecorder {
 }
 
 // Set mocks base method
-func (m *MockStore) Set(session *gmqtt.Session) error {
+func (m *MockStore) Set(session *entities.Session) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Set", session)
 	ret0, _ := ret[0].(error)
@@ -62,10 +62,10 @@ func (mr *MockStoreMockRecorder) Remove(clientID interface{}) *gomock.Call {
 }
 
 // Get mocks base method
-func (m *MockStore) Get(clientID string) (*gmqtt.Session, error) {
+func (m *MockStore) Get(clientID string) (*entities.Session, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Get", clientID)
-	ret0, _ := ret[0].(*gmqtt.Session)
+	ret0, _ := ret[0].(*entities.Session)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

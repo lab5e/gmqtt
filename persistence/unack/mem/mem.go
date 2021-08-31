@@ -1,8 +1,8 @@
 package mem
 
 import (
-	"github.com/lab5e/gmqtt/persistence/unack"
-	"github.com/lab5e/gmqtt/pkg/packets"
+	"github.com/lab5e/lmqtt/persistence/unack"
+	"github.com/lab5e/lmqtt/pkg/packets"
 )
 
 var _ unack.Store = (*Store)(nil)

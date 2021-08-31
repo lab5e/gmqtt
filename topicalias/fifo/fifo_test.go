@@ -7,8 +7,8 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/lab5e/gmqtt/config"
-	"github.com/lab5e/gmqtt/pkg/packets"
+	"github.com/lab5e/lmqtt/config"
+	"github.com/lab5e/lmqtt/pkg/packets"
 )
 
 func TestQueue(t *testing.T) {

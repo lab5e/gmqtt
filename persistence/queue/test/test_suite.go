@@ -7,12 +7,12 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/lab5e/gmqtt"
-	"github.com/lab5e/gmqtt/config"
-	"github.com/lab5e/gmqtt/persistence/queue"
+	"github.com/lab5e/lmqtt/config"
+	"github.com/lab5e/lmqtt/persistence/queue"
 
-	"github.com/lab5e/gmqtt/pkg/packets"
-	"github.com/lab5e/gmqtt/server"
+	"github.com/lab5e/lmqtt/pkg/entities"
+	"github.com/lab5e/lmqtt/pkg/lmqtt"
+	"github.com/lab5e/lmqtt/pkg/packets"
 )
 
 var (
@@ -83,7 +83,7 @@ var initElems = []*queue.Elem{
 		At:     time.Now(),
 		Expiry: time.Time{},
 		MessageWithID: &queue.Publish{
-			Message: &gmqtt.Message{
+			Message: &entities.Message{
 				QoS:      packets.Qos1,
 				Retained: false,
 				Topic:    "/topic1_qos1",
@@ -95,7 +95,7 @@ var initElems = []*queue.Elem{
 		At:     time.Now(),
 		Expiry: time.Time{},
 		MessageWithID: &queue.Publish{
-			Message: &gmqtt.Message{
+			Message: &entities.Message{
 				QoS:      packets.Qos2,
 				Retained: false,
 				Topic:    "/topic1_qos2",
@@ -107,7 +107,7 @@ var initElems = []*queue.Elem{
 		At:     time.Now(),
 		Expiry: time.Time{},
 		MessageWithID: &queue.Publish{
-			Message: &gmqtt.Message{
+			Message: &entities.Message{
 				QoS:      packets.Qos1,
 				Retained: false,
 				Topic:    "/topic1_qos1",
@@ -120,7 +120,7 @@ var initElems = []*queue.Elem{
 		At:     time.Now(),
 		Expiry: time.Time{},
 		MessageWithID: &queue.Publish{
-			Message: &gmqtt.Message{
+			Message: &entities.Message{
 				QoS:      packets.Qos0,
 				Retained: false,
 				Topic:    "/topic1_qos0",
@@ -133,7 +133,7 @@ var initElems = []*queue.Elem{
 		At:     time.Now(),
 		Expiry: time.Time{},
 		MessageWithID: &queue.Publish{
-			Message: &gmqtt.Message{
+			Message: &entities.Message{
 				QoS:      packets.Qos2,
 				Retained: false,
 				Topic:    "/topic1_qos2",
@@ -201,7 +201,7 @@ func reconnect(a *assert.Assertions, cleanStart bool, store queue.Store) {
 	}))
 }
 
-type New func(config config.Config, hooks server.Hooks) (server.Persistence, error)
+type New func(config config.Config, hooks lmqtt.Hooks) (lmqtt.Persistence, error)
 
 func TestQueue(t *testing.T, store queue.Store) {
 	initDrop()
@@ -227,7 +227,7 @@ func testDrop(a *assert.Assertions, store queue.Store) {
 			At:     time.Now(),
 			Expiry: time.Time{},
 			MessageWithID: &queue.Publish{
-				Message: &gmqtt.Message{
+				Message: &entities.Message{
 					Dup:      false,
 					QoS:      2,
 					Retained: false,
@@ -246,7 +246,7 @@ func testDrop(a *assert.Assertions, store queue.Store) {
 		At:     time.Now(),
 		Expiry: time.Time{},
 		MessageWithID: &queue.Publish{
-			Message: &gmqtt.Message{
+			Message: &entities.Message{
 				Dup:      false,
 				QoS:      1,
 				Retained: false,
@@ -274,7 +274,7 @@ func testDrop(a *assert.Assertions, store queue.Store) {
 		At:     time.Now(),
 		Expiry: time.Time{},
 		MessageWithID: &queue.Publish{
-			Message: &gmqtt.Message{
+			Message: &entities.Message{
 				Dup:      false,
 				QoS:      1,
 				Retained: false,
@@ -304,7 +304,7 @@ func testDrop(a *assert.Assertions, store queue.Store) {
 		At:     time.Now(),
 		Expiry: time.Time{},
 		MessageWithID: &queue.Publish{
-			Message: &gmqtt.Message{
+			Message: &entities.Message{
 				Dup:      false,
 				QoS:      1,
 				Retained: false,
@@ -329,7 +329,7 @@ func testDrop(a *assert.Assertions, store queue.Store) {
 		At:     time.Now(),
 		Expiry: time.Time{},
 		MessageWithID: &queue.Publish{
-			Message: &gmqtt.Message{
+			Message: &entities.Message{
 				Dup:      false,
 				QoS:      0,
 				Retained: false,
@@ -347,7 +347,7 @@ func testDrop(a *assert.Assertions, store queue.Store) {
 		At:     time.Now(),
 		Expiry: time.Now().Add(-10 * time.Second),
 		MessageWithID: &queue.Publish{
-			Message: &gmqtt.Message{
+			Message: &entities.Message{
 				Dup:      false,
 				QoS:      0,
 				Retained: false,
@@ -363,7 +363,7 @@ func testDrop(a *assert.Assertions, store queue.Store) {
 		At:     time.Now(),
 		Expiry: time.Time{},
 		MessageWithID: &queue.Publish{
-			Message: &gmqtt.Message{
+			Message: &entities.Message{
 				Dup:      false,
 				QoS:      1,
 				Retained: false,
@@ -383,7 +383,7 @@ func testDrop(a *assert.Assertions, store queue.Store) {
 		At:     time.Now(),
 		Expiry: time.Time{},
 		MessageWithID: &queue.Publish{
-			Message: &gmqtt.Message{
+			Message: &entities.Message{
 				Dup:      false,
 				QoS:      packets.Qos1,
 				Retained: false,
@@ -400,7 +400,7 @@ func testDrop(a *assert.Assertions, store queue.Store) {
 		At:     time.Now(),
 		Expiry: time.Now().Add(TestServerConfig.MQTT.InflightExpiry),
 		MessageWithID: &queue.Publish{
-			Message: &gmqtt.Message{
+			Message: &entities.Message{
 				Dup:      false,
 				QoS:      1,
 				Retained: false,
@@ -431,7 +431,7 @@ func testDrop(a *assert.Assertions, store queue.Store) {
 		At:     time.Now(),
 		Expiry: time.Time{},
 		MessageWithID: &queue.Publish{
-			Message: &gmqtt.Message{
+			Message: &entities.Message{
 				Dup:      false,
 				QoS:      1,
 				Retained: false,
@@ -446,7 +446,7 @@ func testDrop(a *assert.Assertions, store queue.Store) {
 	drop := &queue.Elem{
 		At: time.Now(),
 		MessageWithID: &queue.Publish{
-			Message: &gmqtt.Message{
+			Message: &entities.Message{
 				Dup:      false,
 				QoS:      0,
 				Retained: false,
@@ -482,10 +482,12 @@ func testRead(a *assert.Assertions, store queue.Store) {
 	assertMsgEqual(a, initElems[0], e[0])
 
 	e, err = store.ReadInflight(2)
+	a.Nil(err)
 	a.Len(e, 1)
 	assertMsgEqual(a, initElems[1], e[0])
 	pids := []packets.PacketID{3, 4, 5}
 	e, err = store.Read(pids)
+	a.Nil(err)
 	a.Len(e, 3)
 
 	// must consume packet id in order and do not skip packet id if there are qos0 messages.
@@ -510,7 +512,7 @@ func testReplace(a *assert.Assertions, store queue.Store) {
 		At:     time.Now(),
 		Expiry: time.Time{},
 		MessageWithID: &queue.Publish{
-			Message: &gmqtt.Message{
+			Message: &entities.Message{
 				QoS:     2,
 				Topic:   "/t_replace",
 				Payload: []byte("t_replace"),
@@ -520,7 +522,7 @@ func testReplace(a *assert.Assertions, store queue.Store) {
 		At:     time.Now(),
 		Expiry: time.Time{},
 		MessageWithID: &queue.Publish{
-			Message: &gmqtt.Message{
+			Message: &entities.Message{
 				QoS:     2,
 				Topic:   "/t_replace",
 				Payload: []byte("t_replace"),
@@ -530,7 +532,7 @@ func testReplace(a *assert.Assertions, store queue.Store) {
 		At:     time.Now(),
 		Expiry: time.Time{},
 		MessageWithID: &queue.Publish{
-			Message: &gmqtt.Message{
+			Message: &entities.Message{
 				QoS:      2,
 				Topic:    "/t_unread",
 				Payload:  []byte("t_unread"),
@@ -543,7 +545,7 @@ func testReplace(a *assert.Assertions, store queue.Store) {
 			At:     time.Now(),
 			Expiry: time.Time{},
 			MessageWithID: &queue.Publish{
-				Message: &gmqtt.Message{
+				Message: &entities.Message{
 					QoS:     2,
 					Topic:   "/t_replace",
 					Payload: []byte("t_replace"),
@@ -614,7 +616,7 @@ func testReadExceedsDrop(a *assert.Assertions, store queue.Store) {
 	exceeded := &queue.Elem{
 		At: time.Now(),
 		MessageWithID: &queue.Publish{
-			Message: &gmqtt.Message{
+			Message: &entities.Message{
 				Dup:      false,
 				QoS:      1,
 				Retained: false,

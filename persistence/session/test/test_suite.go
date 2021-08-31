@@ -7,18 +7,18 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/lab5e/gmqtt"
-	"github.com/lab5e/gmqtt/persistence/session"
+	"github.com/lab5e/lmqtt/persistence/session"
+	"github.com/lab5e/lmqtt/pkg/entities"
 )
 
 func TestSuite(t *testing.T, store session.Store) {
 	a := assert.New(t)
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	var tt = []*gmqtt.Session{
+	var tt = []*entities.Session{
 		{
 			ClientID: "client",
-			Will: &gmqtt.Message{
+			Will: &entities.Message{
 				Topic:   "topicA",
 				Payload: []byte("abc"),
 			},
@@ -41,8 +41,8 @@ func TestSuite(t *testing.T, store session.Store) {
 		a.Nil(err)
 		a.EqualValues(v, sess)
 	}
-	var sess []*gmqtt.Session
-	err := store.Iterate(func(session *gmqtt.Session) bool {
+	var sess []*entities.Session
+	err := store.Iterate(func(session *entities.Session) bool {
 		sess = append(sess, session)
 		return true
 	})

@@ -5,8 +5,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/lab5e/gmqtt"
-	"github.com/lab5e/gmqtt/pkg/packets"
+	"github.com/lab5e/lmqtt/pkg/entities"
+	"github.com/lab5e/lmqtt/pkg/packets"
 )
 
 var testTopicMatch = []struct {
@@ -203,7 +203,7 @@ func TestTopicTrie_matchedClients(t *testing.T) {
 	a := assert.New(t)
 	for _, v := range testTopicMatch {
 		trie := newTopicTrie()
-		trie.subscribe("cid", &gmqtt.Subscription{
+		trie.subscribe("cid", &entities.Subscription{
 			TopicFilter: v.subTopic,
 		})
 		qos := trie.getMatchedTopicFilter(v.topic)
@@ -221,7 +221,7 @@ func TestTopicTrie_matchedClients_Qos(t *testing.T) {
 	for _, v := range topicMatchQosTest {
 		trie := newTopicTrie()
 		for _, tt := range v.topics {
-			trie.subscribe("cid", &gmqtt.Subscription{
+			trie.subscribe("cid", &entities.Subscription{
 				TopicFilter: tt.Name,
 				QoS:         tt.Qos,
 			})
@@ -236,7 +236,7 @@ func TestTopicTrie_subscribeAndFind(t *testing.T) {
 	trie := newTopicTrie()
 	for cid, v := range testSubscribeAndFind.subTopics {
 		for _, topic := range v {
-			trie.subscribe(cid, &gmqtt.Subscription{
+			trie.subscribe(cid, &entities.Subscription{
 				TopicFilter: topic.Name,
 				QoS:         topic.Qos,
 			})
@@ -262,7 +262,7 @@ func TestTopicTrie_unsubscribe(t *testing.T) {
 	trie := newTopicTrie()
 	for cid, v := range testUnsubscribe.subTopics {
 		for _, topic := range v {
-			trie.subscribe(cid, &gmqtt.Subscription{
+			trie.subscribe(cid, &entities.Subscription{
 				TopicFilter: topic.Name,
 				QoS:         topic.Qos,
 			})
@@ -289,13 +289,13 @@ func TestTopicTrie_preOrderTraverse(t *testing.T) {
 	a := assert.New(t)
 	trie := newTopicTrie()
 	for _, v := range testPreOrderTraverse.topics {
-		trie.subscribe(testPreOrderTraverse.clientID, &gmqtt.Subscription{
+		trie.subscribe(testPreOrderTraverse.clientID, &entities.Subscription{
 			TopicFilter: v.Name,
 			QoS:         v.Qos,
 		})
 	}
 	var rs []packets.Topic
-	trie.preOrderTraverse(func(clientID string, subscription *gmqtt.Subscription) bool {
+	trie.preOrderTraverse(func(clientID string, subscription *entities.Subscription) bool {
 		a.Equal(testPreOrderTraverse.clientID, clientID)
 		rs = append(rs, packets.Topic{
 			SubOptions: packets.SubOptions{

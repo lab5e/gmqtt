@@ -7,10 +7,7 @@ PACKAGES	?= $(shell go list ./...)
 FILES		?= $(shell find . -type f -name '*.go' -not -path "./vendor/*")
 BUILD_DIR	?= build
 
-# Binaries
-PROTOC		?= protoc
-
-.PHONY: help clean fmt lint vet test test-cover build build-docker all
+.PHONY: help clean fmt lint vet test test-cover build all
 
 default: help
 
@@ -24,13 +21,8 @@ help:
 # clean, format, build and unit test
 all:
 	make clean-all
-	make gofmt
-	make build
+	make fmt
 	make test
-
-# build and install go application executable
-install:
-	go install -v ./...
 
 # Print useful environment variables to stdout
 env:
@@ -53,11 +45,6 @@ tools:
 	go get -u golang.org/x/tools/cmd/goimports
 	go get -u github.com/golang/lint/golint
 	go get github.com/golang/mock/mockgen@v1.4.4
-	# Reqire when adding proto and grpc compilation
-	# go get -u github.com/golang/protobuf/protoc-gen-go
-	# go get -u github.com/mwitkow/go-proto-validators/protoc-gen-govalidators
-	# go get -u github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway
-	# go get -u github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger
 
 # format the go source files
 fmt:
@@ -79,45 +66,36 @@ doc:
 update-dependencies:
 	go mod tidy
 
-# generate grpc, grpc-gw files and swagger docs
-generate-grpc: compile-proto generate-grpcgw generate-swagger
-
-# compile protobuf definitions into golang source
-compile-proto:
-	echo 'To Be implemented'
-
-# generate grpc-gw reverse proxy code
-generate-grpcgw:
-	echo 'To Be implemented'
-	
-# generate swagger docs from the proto files
-generate-swagger:
-	echo 'To Be implemented'
-
 # generate mock code
 generate-mocks:
-	@./mock_gen.sh
+	@mockgen -source=config/config.go -destination=./config/config_mock.go -package=config -self_package=github.com/lab5e/lmqtt/config
+	@mockgen -source=persistence/queue/elem.go -destination=./persistence/queue/elem_mock.go -package=queue -self_package=github.com/lab5e/lmqtt/queue
+	@mockgen -source=persistence/queue/queue.go -destination=./persistence/queue/queue_mock.go -package=queue -self_package=github.com/lab5e/lmqtt/queue
+	@mockgen -source=persistence/session/session.go -destination=./persistence/session/session_mock.go -package=session -self_package=github.com/lab5e/lmqtt/session
+	@mockgen -source=persistence/subscription/subscription.go -destination=./persistence/subscription/subscription_mock.go -package=subscription -self_package=github.com/lab5e/lmqtt/subscription
+	@mockgen -source=persistence/unack/unack.go -destination=./persistence/unack/unack_mock.go -package=unack -self_package=github.com/lab5e/lmqtt/unack
+	@mockgen -source=pkg/packets/packets.go -destination=./pkg/packets/packets_mock.go -package=packets -self_package=github.com/lab5e/lmqtt/packets
+	@mockgen -source=retained/interface.go -destination=./retained/interface_mock.go -package=retained -self_package=github.com/lab5e/lmqtt/retained
+	@mockgen -source=pkg/gmqtt/client.go -destination=./server/client_mock.go -package=server -self_package=github.com/lab5e/lmqtt/server
+	@mockgen -source=pkg/gmqtt/persistence.go -destination=./server/persistence_mock.go -package=server -self_package=github.com/lab5e/lmqtt/server
+	@mockgen -source=pkg/gmqtt/plugin.go -destination=./server/plugin_mock.go -package=server -self_package=github.com/lab5e/lmqtt/server
+	@mockgen -source=pkg/gmqtt/server.go -destination=./server/server_mock.go -package=server -self_package=github.com/lab5e/lmqtt/server
+	@mockgen -source=pkg/gmqtt/service.go -destination=./server/service_mock.go -package=server -self_package=github.com/lab5e/lmqtt/server
+	@mockgen -source=pkg/gmqtt/stats.go -destination=./server/stats_mock.go -package=server -self_package=github.com/lab5e/lmqtt/server
+	@mockgen -source=pkg/gmqtt/topic_alias.go -destination=./server/topic_alias_mock.go -package=server -self_package=github.com/lab5e/lmqtt/server
+
 
 go-generate:
 	go generate ./...
 
-run: go-generate
-	go run ./cmd/gmqttd start -c ./cmd/gmqttd/default_config.yml
-
-# generate all grpc files and mocks and build the go code
-build: go-generate
-	go build -o $(BUILD_DIR)/gmqttd ./cmd/gmqttd
-
 # generate mocks and run short tests
 test: generate-mocks
-	go test -v -race ./... 
+	go test -v -race ./...
 
 # run benchmark tests
 test-bench: generate-mocks
 	go test -bench ./...
 
-# Generate test coverage
-# Run test coverage and generate html report
 test-cover:
 	rm -fr coverage
 	mkdir coverage
@@ -129,9 +107,3 @@ test-cover:
 
 test-all: test test-bench test-cover
 
-# Build Golang application binary with settings to enable it to run in a Docker scratch container.
-binary: go-generate
-	CGO_ENABLED=0 GOOS=linux go build  -ldflags '-s' -o $(BUILD_DIR)/gmqttd ./cmd/gmqttd
-
-build-docker:
-	docker build -t gmqtt/gmqttd .

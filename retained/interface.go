@@ -1,12 +1,12 @@
 package retained
 
 import (
-	"github.com/lab5e/gmqtt"
+	"github.com/lab5e/lmqtt/pkg/entities"
 )
 
 // IterateFn is the callback function used by iterate()
 // Return false means to stop the iteration.
-type IterateFn func(message *gmqtt.Message) bool
+type IterateFn func(message *entities.Message) bool
 
 // Store is the interface used by gmqtt.server and external logic to handler the operations of retained messages.
 // User can get the implementation from gmqtt.Server interface.
@@ -15,15 +15,15 @@ type IterateFn func(message *gmqtt.Message) bool
 // This methods will not trigger any gmqtt hooks.
 type Store interface {
 	// GetRetainedMessage returns the message that equals the passed topic.
-	GetRetainedMessage(topicName string) *gmqtt.Message
+	GetRetainedMessage(topicName string) *entities.Message
 	// ClearAll clears all retained messages.
 	ClearAll()
 	// AddOrReplace adds or replaces a retained message.
-	AddOrReplace(message *gmqtt.Message)
+	AddOrReplace(message *entities.Message)
 	// remove removes a retained message.
 	Remove(topicName string)
 	// GetMatchedMessages returns the retained messages that match the passed topic filter.
-	GetMatchedMessages(topicFilter string) []*gmqtt.Message
+	GetMatchedMessages(topicFilter string) []*entities.Message
 	// Iterate iterate all retained messages. The callback is called once for each message.
 	// If callback return false, the iteration will be stopped.
 	// Notice:

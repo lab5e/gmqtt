@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/lab5e/gmqtt/pkg/codes"
+	"github.com/lab5e/lmqtt/pkg/codes"
 )
 
 // Suback represents the MQTT Suback  packet.

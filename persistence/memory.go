@@ -1,23 +1,23 @@
 package persistence
 
 import (
-	"github.com/lab5e/gmqtt/config"
-	"github.com/lab5e/gmqtt/persistence/queue"
-	mem_queue "github.com/lab5e/gmqtt/persistence/queue/mem"
-	"github.com/lab5e/gmqtt/persistence/session"
-	mem_session "github.com/lab5e/gmqtt/persistence/session/mem"
-	"github.com/lab5e/gmqtt/persistence/subscription"
-	mem_sub "github.com/lab5e/gmqtt/persistence/subscription/mem"
-	"github.com/lab5e/gmqtt/persistence/unack"
-	mem_unack "github.com/lab5e/gmqtt/persistence/unack/mem"
-	"github.com/lab5e/gmqtt/server"
+	"github.com/lab5e/lmqtt/config"
+	"github.com/lab5e/lmqtt/persistence/queue"
+	mem_queue "github.com/lab5e/lmqtt/persistence/queue/mem"
+	"github.com/lab5e/lmqtt/persistence/session"
+	mem_session "github.com/lab5e/lmqtt/persistence/session/mem"
+	"github.com/lab5e/lmqtt/persistence/subscription"
+	mem_sub "github.com/lab5e/lmqtt/persistence/subscription/mem"
+	"github.com/lab5e/lmqtt/persistence/unack"
+	mem_unack "github.com/lab5e/lmqtt/persistence/unack/mem"
+	"github.com/lab5e/lmqtt/pkg/lmqtt"
 )
 
 func init() {
-	server.RegisterPersistenceFactory("memory", NewMemory)
+	lmqtt.RegisterPersistenceFactory("memory", NewMemory)
 }
 
-func NewMemory(config config.Config) (server.Persistence, error) {
+func NewMemory(config config.Config) (lmqtt.Persistence, error) {
 	return &memory{}, nil
 }
 

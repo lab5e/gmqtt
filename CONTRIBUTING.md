@@ -2,7 +2,7 @@
 
 We welcome contributions to Gmqtt of any kind including documentation, plugin, test, bug reports, issues, feature requests, typo fix, etc.
 
-If you want to write some code, but don't know where to start or what you might want to do, take a look at the [Unplanned](https://github.com/lab5e/gmqtt/milestone/2) milestone.
+If you want to write some code, but don't know where to start or what you might want to do, take a look at the [Unplanned](https://github.com/lab5e/lmqtt/milestone/2) milestone.
 
 ## Contributing Code
 
@@ -28,7 +28,7 @@ Testing is really important for building a robust application. Any new code or c
 Gmqtt uses [GoMock](https://github.com/golang/mock) to generate mock codes. The mock file must begin with the source file name and ends with `_mock.go`. For example, the following command will generate the mock file for `client.go`
 
 ```bash
-mockgen -source=server/client.go -destination=/usr/local/gopath/src/github.com/lab5e/gmqtt/server/client_mock.go -package=server -self_package=github.com/lab5e/gmqtt/server
+mockgen -source=server/client.go -destination=/usr/local/gopath/src/github.com/lab5e/lmqtt/server/client_mock.go -package=server -self_package=github.com/lab5e/lmqtt/server
 ```
 
 #### Assertion

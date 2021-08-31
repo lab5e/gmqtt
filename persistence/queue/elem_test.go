@@ -6,8 +6,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/lab5e/gmqtt"
-	"github.com/lab5e/gmqtt/pkg/packets"
+	"github.com/lab5e/lmqtt/pkg/entities"
+	"github.com/lab5e/lmqtt/pkg/packets"
 )
 
 func assertElemEqual(a *assert.Assertions, expected, actual *Elem) {
@@ -23,7 +23,7 @@ func TestElem_Encode_Publish(t *testing.T) {
 	e := &Elem{
 		At: time.Now(),
 		MessageWithID: &Publish{
-			Message: &gmqtt.Message{
+			Message: &entities.Message{
 				Dup:                    false,
 				QoS:                    2,
 				Retained:               false,
@@ -74,7 +74,7 @@ func Benchmark_Encode_Publish(b *testing.B) {
 		e := &Elem{
 			At: time.Unix(time.Now().Unix(), 0),
 			MessageWithID: &Publish{
-				Message: &gmqtt.Message{
+				Message: &entities.Message{
 					Dup:                    false,
 					QoS:                    2,
 					Retained:               false,

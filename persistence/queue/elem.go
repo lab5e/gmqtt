@@ -6,9 +6,9 @@ import (
 	"errors"
 	"time"
 
-	"github.com/lab5e/gmqtt"
-	"github.com/lab5e/gmqtt/persistence/encoding"
-	"github.com/lab5e/gmqtt/pkg/packets"
+	"github.com/lab5e/lmqtt/persistence/encoding"
+	"github.com/lab5e/lmqtt/pkg/entities"
+	"github.com/lab5e/lmqtt/pkg/packets"
 )
 
 type MessageWithID interface {
@@ -17,7 +17,7 @@ type MessageWithID interface {
 }
 
 type Publish struct {
-	*gmqtt.Message
+	*entities.Message
 }
 
 func (p *Publish) ID() packets.PacketID {

@@ -4,8 +4,8 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/lab5e/gmqtt"
-	"github.com/lab5e/gmqtt/pkg/packets"
+	"github.com/lab5e/lmqtt/pkg/entities"
+	"github.com/lab5e/lmqtt/pkg/packets"
 )
 
 // IterationType specifies the types of subscription that will be iterated.
@@ -34,9 +34,9 @@ const (
 )
 
 // FromTopic returns the subscription instance for given topic and subscription id.
-func FromTopic(topic packets.Topic, id uint32) *gmqtt.Subscription {
+func FromTopic(topic packets.Topic, id uint32) *entities.Subscription {
 	shareName, topicFilter := SplitTopic(topic.Name)
-	s := &gmqtt.Subscription{
+	s := &entities.Subscription{
 		ShareName:         shareName,
 		TopicFilter:       topicFilter,
 		ID:                id,
@@ -50,12 +50,12 @@ func FromTopic(topic packets.Topic, id uint32) *gmqtt.Subscription {
 
 // IterateFn is the callback function used by iterate()
 // Return false means to stop the iteration.
-type IterateFn func(clientID string, sub *gmqtt.Subscription) bool
+type IterateFn func(clientID string, sub *entities.Subscription) bool
 
 // SubscribeResult is the result of Subscribe()
 type SubscribeResult = []struct {
 	// Topic is the Subscribed topic
-	Subscription *gmqtt.Subscription
+	Subscription *entities.Subscription
 	// AlreadyExisted shows whether the topic is already existed.
 	AlreadyExisted bool
 }
@@ -70,7 +70,7 @@ type Stats struct {
 }
 
 // ClientSubscriptions groups the subscriptions by client id.
-type ClientSubscriptions map[string][]*gmqtt.Subscription
+type ClientSubscriptions map[string][]*entities.Subscription
 
 // IterationOptions
 type IterationOptions struct {
@@ -98,7 +98,7 @@ type Store interface {
 	// Notice:
 	// This method will succeed even if the client is not exists, the subscriptions
 	// will affect the new client with the client id.
-	Subscribe(clientID string, subscriptions ...*gmqtt.Subscription) (rs SubscribeResult, err error)
+	Subscribe(clientID string, subscriptions ...*entities.Subscription) (rs SubscribeResult, err error)
 	// Unsubscribe removes subscriptions of a specific client.
 	Unsubscribe(clientID string, topics ...string) error
 	// UnsubscribeAll removes all subscriptions of a specific client.
@@ -118,7 +118,7 @@ type Store interface {
 // GetTopicMatched returns the subscriptions that match the passed topic.
 func GetTopicMatched(store Store, topicFilter string, t IterationType) ClientSubscriptions {
 	rs := make(ClientSubscriptions)
-	store.Iterate(func(clientID string, subscription *gmqtt.Subscription) bool {
+	store.Iterate(func(clientID string, subscription *entities.Subscription) bool {
 		rs[clientID] = append(rs[clientID], subscription)
 		return true
 	}, IterationOptions{
@@ -135,7 +135,7 @@ func GetTopicMatched(store Store, topicFilter string, t IterationType) ClientSub
 // Get returns the subscriptions that equals the passed topic filter.
 func Get(store Store, topicFilter string, t IterationType) ClientSubscriptions {
 	rs := make(ClientSubscriptions)
-	store.Iterate(func(clientID string, subscription *gmqtt.Subscription) bool {
+	store.Iterate(func(clientID string, subscription *entities.Subscription) bool {
 		rs[clientID] = append(rs[clientID], subscription)
 		return true
 	}, IterationOptions{
@@ -150,9 +150,9 @@ func Get(store Store, topicFilter string, t IterationType) ClientSubscriptions {
 }
 
 // GetClientSubscriptions returns the subscriptions of a specific client.
-func GetClientSubscriptions(store Store, clientID string, t IterationType) []*gmqtt.Subscription {
-	var rs []*gmqtt.Subscription
-	store.Iterate(func(clientID string, subscription *gmqtt.Subscription) bool {
+func GetClientSubscriptions(store Store, clientID string, t IterationType) []*entities.Subscription {
+	var rs []*entities.Subscription
+	store.Iterate(func(clientID string, subscription *entities.Subscription) bool {
 		rs = append(rs, subscription)
 		return true
 	}, IterationOptions{

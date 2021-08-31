@@ -3,8 +3,8 @@ package trie
 import (
 	"strings"
 
-	"github.com/lab5e/gmqtt"
-	"github.com/lab5e/gmqtt/retained"
+	"github.com/lab5e/lmqtt/pkg/entities"
+	"github.com/lab5e/lmqtt/retained"
 )
 
 // topicTrie
@@ -16,7 +16,7 @@ type children = map[string]*topicNode
 // topicNode
 type topicNode struct {
 	children  children
-	msg       *gmqtt.Message
+	msg       *entities.Message
 	parent    *topicNode // pointer of parent node
 	topicName string
 }
@@ -89,10 +89,10 @@ func (t *topicTrie) matchTopic(topicSlice []string, fn retained.IterateFn) {
 	}
 }
 
-func (t *topicTrie) getMatchedMessages(topicFilter string) []*gmqtt.Message {
+func (t *topicTrie) getMatchedMessages(topicFilter string) []*entities.Message {
 	topicLv := strings.Split(topicFilter, "/")
-	var rs []*gmqtt.Message
-	t.matchTopic(topicLv, func(message *gmqtt.Message) bool {
+	var rs []*entities.Message
+	t.matchTopic(topicLv, func(message *entities.Message) bool {
 		rs = append(rs, message.Copy())
 		return true
 	})
@@ -104,7 +104,7 @@ func isSystemTopic(topicName string) bool {
 }
 
 // addRetainMsg add a retain message
-func (t *topicTrie) addRetainMsg(topicName string, message *gmqtt.Message) {
+func (t *topicTrie) addRetainMsg(topicName string, message *entities.Message) {
 	topicSlice := strings.Split(topicName, "/")
 	var pNode = t
 	for _, lv := range topicSlice {

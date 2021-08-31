@@ -3,8 +3,8 @@ package mem
 import (
 	"strings"
 
-	"github.com/lab5e/gmqtt"
-	"github.com/lab5e/gmqtt/persistence/subscription"
+	"github.com/lab5e/lmqtt/persistence/subscription"
+	"github.com/lab5e/lmqtt/pkg/entities"
 )
 
 // topicTrie
@@ -13,7 +13,7 @@ type topicTrie = topicNode
 // children
 type children = map[string]*topicNode
 
-type clientOpts map[string]*gmqtt.Subscription
+type clientOpts map[string]*entities.Subscription
 
 // topicNode
 type topicNode struct {
@@ -48,7 +48,7 @@ func (t *topicNode) newChild() *topicNode {
 }
 
 // subscribe add a subscription and return the added node
-func (t *topicTrie) subscribe(clientID string, s *gmqtt.Subscription) *topicNode {
+func (t *topicTrie) subscribe(clientID string, s *entities.Subscription) *topicNode {
 	topicSlice := strings.Split(s.TopicFilter, "/")
 	var pNode = t
 	for _, lv := range topicSlice {

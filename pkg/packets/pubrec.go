@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/lab5e/gmqtt/pkg/codes"
+	"github.com/lab5e/lmqtt/pkg/codes"
 )
 
 // Pubrec represents the MQTT Pubrec  packet.

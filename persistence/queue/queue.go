@@ -3,7 +3,7 @@ package queue
 import (
 	"time"
 
-	"github.com/lab5e/gmqtt/pkg/packets"
+	"github.com/lab5e/lmqtt/pkg/packets"
 )
 
 // InitOptions is used to pass some required client information to the queue.Init()

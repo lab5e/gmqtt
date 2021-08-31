@@ -6,12 +6,12 @@ import (
 	"io"
 	"time"
 
-	"github.com/lab5e/gmqtt"
-	"github.com/lab5e/gmqtt/pkg/packets"
+	"github.com/lab5e/lmqtt/pkg/entities"
+	"github.com/lab5e/lmqtt/pkg/packets"
 )
 
 // EncodeMessage encodes message into bytes and write it to the buffer
-func EncodeMessage(msg *gmqtt.Message, b *bytes.Buffer) {
+func EncodeMessage(msg *entities.Message, b *bytes.Buffer) {
 	if msg == nil {
 		return
 	}
@@ -51,12 +51,11 @@ func EncodeMessage(msg *gmqtt.Message, b *bytes.Buffer) {
 		WriteString(b, v.K)
 		WriteString(b, v.V)
 	}
-	return
 }
 
 // DecodeMessage decodes message from buffer.
-func DecodeMessage(b *bytes.Buffer) (msg *gmqtt.Message, err error) {
-	msg = &gmqtt.Message{}
+func DecodeMessage(b *bytes.Buffer) (msg *entities.Message, err error) {
+	msg = &entities.Message{}
 	msg.Dup, err = ReadBool(b)
 	if err != nil {
 		return
@@ -139,14 +138,14 @@ func DecodeMessage(b *bytes.Buffer) (msg *gmqtt.Message, err error) {
 }
 
 // DecodeMessageFromBytes decodes message from bytes.
-func DecodeMessageFromBytes(b []byte) (msg *gmqtt.Message, err error) {
+func DecodeMessageFromBytes(b []byte) (msg *entities.Message, err error) {
 	if len(b) == 0 {
 		return nil, nil
 	}
 	return DecodeMessage(bytes.NewBuffer(b))
 }
 
-func EncodeSession(sess *gmqtt.Session, b *bytes.Buffer) {
+func EncodeSession(sess *entities.Session, b *bytes.Buffer) {
 	WriteString(b, []byte(sess.ClientID))
 	if sess.Will != nil {
 		b.WriteByte(1)
@@ -160,8 +159,8 @@ func EncodeSession(sess *gmqtt.Session, b *bytes.Buffer) {
 	WriteUint32(b, sess.ExpiryInterval)
 }
 
-func DecodeSession(b *bytes.Buffer) (sess *gmqtt.Session, err error) {
-	sess = &gmqtt.Session{}
+func DecodeSession(b *bytes.Buffer) (sess *entities.Session, err error) {
+	sess = &entities.Session{}
 	cid, err := ReadString(b)
 	if err != nil {
 		return nil, err

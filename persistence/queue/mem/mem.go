@@ -7,9 +7,9 @@ import (
 
 	"go.uber.org/zap"
 
-	"github.com/lab5e/gmqtt/persistence/queue"
-	"github.com/lab5e/gmqtt/pkg/packets"
-	"github.com/lab5e/gmqtt/server"
+	"github.com/lab5e/lmqtt/persistence/queue"
+	"github.com/lab5e/lmqtt/pkg/lmqtt"
+	"github.com/lab5e/lmqtt/pkg/packets"
 )
 
 var _ queue.Store = (*Queue)(nil)
@@ -25,7 +25,6 @@ type Queue struct {
 	cond           *sync.Cond
 	clientID       string
 	version        packets.Version
-	opts           *Options
 	readBytesLimit uint32
 	l              *list.List
 	// current is the next element to read.
@@ -47,7 +46,7 @@ func New(opts Options) (*Queue, error) {
 		max:            opts.MaxQueuedMsg,
 		inflightExpiry: opts.InflightExpiry,
 		notifier:       opts.DefaultNotifier,
-		log:            server.LoggerWithField(zap.String("queue", "memory")),
+		log:            lmqtt.LoggerWithField(zap.String("queue", "memory")),
 	}, nil
 }
 

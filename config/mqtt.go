@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/lab5e/gmqtt/pkg/packets"
+	"github.com/lab5e/lmqtt/pkg/packets"
 )
 
 const (

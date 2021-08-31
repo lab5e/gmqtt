@@ -1,7 +1,0 @@
-packages:
-  - admin
-  - prometheus
-  - federation
-  - auth
-  # for external plugin, use full import path
-  # - github.com/lab5e/gmqtt/plugin/prometheus

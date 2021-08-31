@@ -5,16 +5,16 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/lab5e/gmqtt"
+	"github.com/lab5e/lmqtt/pkg/entities"
 )
 
 func TestTrieDB_ClearAll(t *testing.T) {
 	a := assert.New(t)
 	s := NewStore()
-	s.AddOrReplace(&gmqtt.Message{
+	s.AddOrReplace(&entities.Message{
 		Topic: "a/b/c",
 	})
-	s.AddOrReplace(&gmqtt.Message{
+	s.AddOrReplace(&entities.Message{
 		Topic:   "a/b/c/d",
 		Payload: []byte{1, 2, 3},
 	})
@@ -26,7 +26,7 @@ func TestTrieDB_ClearAll(t *testing.T) {
 func TestTrieDB_GetRetainedMessage(t *testing.T) {
 	a := assert.New(t)
 	s := NewStore()
-	tt := []*gmqtt.Message{
+	tt := []*entities.Message{
 		{
 			Topic:   "a/b/c/d",
 			Payload: []byte{1, 2, 3},
@@ -54,7 +54,7 @@ func TestTrieDB_GetRetainedMessage(t *testing.T) {
 func TestTrieDB_GetMatchedMessages(t *testing.T) {
 	a := assert.New(t)
 	s := NewStore()
-	msgs := []*gmqtt.Message{
+	msgs := []*entities.Message{
 		{
 			Topic:   "a/b/c/d",
 			Payload: []byte{1, 2, 3},
@@ -82,11 +82,11 @@ func TestTrieDB_GetMatchedMessages(t *testing.T) {
 	}
 	var tt = []struct {
 		TopicFilter string
-		expected    map[string]*gmqtt.Message
+		expected    map[string]*entities.Message
 	}{
 		{
 			TopicFilter: "a/+/c/",
-			expected: map[string]*gmqtt.Message{
+			expected: map[string]*entities.Message{
 				"a/b/c/": {
 					Payload: []byte{1, 2, 3, 4},
 				},
@@ -94,7 +94,7 @@ func TestTrieDB_GetMatchedMessages(t *testing.T) {
 		},
 		{
 			TopicFilter: "a/+",
-			expected: map[string]*gmqtt.Message{
+			expected: map[string]*entities.Message{
 				"a/": {
 					Payload: []byte{1, 2, 3},
 				},
@@ -105,7 +105,7 @@ func TestTrieDB_GetMatchedMessages(t *testing.T) {
 		},
 		{
 			TopicFilter: "#",
-			expected: map[string]*gmqtt.Message{
+			expected: map[string]*entities.Message{
 				"a/b/c/d": {
 					Payload: []byte{1, 2, 3},
 				},
@@ -128,7 +128,7 @@ func TestTrieDB_GetMatchedMessages(t *testing.T) {
 		},
 		{
 			TopicFilter: "a/#",
-			expected: map[string]*gmqtt.Message{
+			expected: map[string]*entities.Message{
 				"a/b/c/d": {
 					Payload: []byte{1, 2, 3},
 				},
@@ -148,7 +148,7 @@ func TestTrieDB_GetMatchedMessages(t *testing.T) {
 		},
 		{
 			TopicFilter: "a/b/c/d",
-			expected: map[string]*gmqtt.Message{
+			expected: map[string]*entities.Message{
 				"a/b/c/d": {
 					Payload: []byte{1, 2, 3},
 				},
@@ -162,7 +162,7 @@ func TestTrieDB_GetMatchedMessages(t *testing.T) {
 		t.Run(v.TopicFilter, func(t *testing.T) {
 			rs := s.GetMatchedMessages(v.TopicFilter)
 			a.Equal(len(v.expected), len(rs))
-			got := make(map[string]*gmqtt.Message)
+			got := make(map[string]*entities.Message)
 			for _, v := range rs {
 				got[v.Topic] = v
 			}
@@ -177,10 +177,10 @@ func TestTrieDB_GetMatchedMessages(t *testing.T) {
 func TestTrieDB_Remove(t *testing.T) {
 	a := assert.New(t)
 	s := NewStore()
-	s.AddOrReplace(&gmqtt.Message{
+	s.AddOrReplace(&entities.Message{
 		Topic: "a/b/c",
 	})
-	s.AddOrReplace(&gmqtt.Message{
+	s.AddOrReplace(&entities.Message{
 		Topic:   "a/b/c/d",
 		Payload: []byte{1, 2, 3},
 	})
@@ -192,7 +192,7 @@ func TestTrieDB_Remove(t *testing.T) {
 func TestTrieDB_Iterate(t *testing.T) {
 	a := assert.New(t)
 	s := NewStore()
-	msgs := []*gmqtt.Message{
+	msgs := []*entities.Message{
 		{
 			Topic:   "a/b/c/d",
 			Payload: []byte{1, 2, 3},
@@ -222,8 +222,8 @@ func TestTrieDB_Iterate(t *testing.T) {
 	for _, v := range msgs {
 		s.AddOrReplace(v)
 	}
-	var rs []*gmqtt.Message
-	s.Iterate(func(message *gmqtt.Message) bool {
+	var rs []*entities.Message
+	s.Iterate(func(message *entities.Message) bool {
 		rs = append(rs, message)
 		return true
 	})
@@ -233,7 +233,7 @@ func TestTrieDB_Iterate(t *testing.T) {
 func TestTrieDB_Iterate_Cancel(t *testing.T) {
 	a := assert.New(t)
 	s := NewStore()
-	msgs := []*gmqtt.Message{
+	msgs := []*entities.Message{
 		{
 			Topic:   "a/b/c/d",
 			Payload: []byte{1, 2, 3},
@@ -260,8 +260,8 @@ func TestTrieDB_Iterate_Cancel(t *testing.T) {
 		s.AddOrReplace(v)
 	}
 	var i int
-	var rs []*gmqtt.Message
-	s.Iterate(func(message *gmqtt.Message) bool {
+	var rs []*entities.Message
+	s.Iterate(func(message *entities.Message) bool {
 		if i == 2 {
 			return false
 		}

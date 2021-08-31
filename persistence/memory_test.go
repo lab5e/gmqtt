@@ -6,18 +6,18 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/lab5e/gmqtt/config"
-	queue_test "github.com/lab5e/gmqtt/persistence/queue/test"
-	sess_test "github.com/lab5e/gmqtt/persistence/session/test"
-	"github.com/lab5e/gmqtt/persistence/subscription"
-	sub_test "github.com/lab5e/gmqtt/persistence/subscription/test"
-	unack_test "github.com/lab5e/gmqtt/persistence/unack/test"
-	"github.com/lab5e/gmqtt/server"
+	"github.com/lab5e/lmqtt/config"
+	queue_test "github.com/lab5e/lmqtt/persistence/queue/test"
+	sess_test "github.com/lab5e/lmqtt/persistence/session/test"
+	"github.com/lab5e/lmqtt/persistence/subscription"
+	sub_test "github.com/lab5e/lmqtt/persistence/subscription/test"
+	unack_test "github.com/lab5e/lmqtt/persistence/unack/test"
+	"github.com/lab5e/lmqtt/pkg/lmqtt"
 )
 
 type MemorySuite struct {
 	suite.Suite
-	p server.Persistence
+	p lmqtt.Persistence
 }
 
 func (s *MemorySuite) TestQueue() {

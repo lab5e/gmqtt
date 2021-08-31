@@ -6,7 +6,7 @@ package subscription
 
 import (
 	gomock "github.com/golang/mock/gomock"
-	gmqtt "github.com/lab5e/gmqtt"
+	entities "github.com/lab5e/lmqtt/pkg/entities"
 	reflect "reflect"
 )
 
@@ -48,7 +48,7 @@ func (mr *MockStoreMockRecorder) Init(clientIDs interface{}) *gomock.Call {
 }
 
 // Subscribe mocks base method
-func (m *MockStore) Subscribe(clientID string, subscriptions ...*gmqtt.Subscription) (SubscribeResult, error) {
+func (m *MockStore) Subscribe(clientID string, subscriptions ...*entities.Subscription) (SubscribeResult, error) {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{clientID}
 	for _, a := range subscriptions {

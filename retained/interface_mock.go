@@ -6,7 +6,7 @@ package retained
 
 import (
 	gomock "github.com/golang/mock/gomock"
-	gmqtt "github.com/lab5e/gmqtt"
+	entities "github.com/lab5e/lmqtt/pkg/entities"
 	reflect "reflect"
 )
 
@@ -34,10 +34,10 @@ func (m *MockStore) EXPECT() *MockStoreMockRecorder {
 }
 
 // GetRetainedMessage mocks base method
-func (m *MockStore) GetRetainedMessage(topicName string) *gmqtt.Message {
+func (m *MockStore) GetRetainedMessage(topicName string) *entities.Message {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetRetainedMessage", topicName)
-	ret0, _ := ret[0].(*gmqtt.Message)
+	ret0, _ := ret[0].(*entities.Message)
 	return ret0
 }
 
@@ -60,7 +60,7 @@ func (mr *MockStoreMockRecorder) ClearAll() *gomock.Call {
 }
 
 // AddOrReplace mocks base method
-func (m *MockStore) AddOrReplace(message *gmqtt.Message) {
+func (m *MockStore) AddOrReplace(message *entities.Message) {
 	m.ctrl.T.Helper()
 	m.ctrl.Call(m, "AddOrReplace", message)
 }
@@ -84,10 +84,10 @@ func (mr *MockStoreMockRecorder) Remove(topicName interface{}) *gomock.Call {
 }
 
 // GetMatchedMessages mocks base method
-func (m *MockStore) GetMatchedMessages(topicFilter string) []*gmqtt.Message {
+func (m *MockStore) GetMatchedMessages(topicFilter string) []*entities.Message {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetMatchedMessages", topicFilter)
-	ret0, _ := ret[0].([]*gmqtt.Message)
+	ret0, _ := ret[0].([]*entities.Message)
 	return ret0
 }
 

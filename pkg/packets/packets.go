@@ -8,7 +8,7 @@ import (
 	"io"
 	"unicode/utf8"
 
-	"github.com/lab5e/gmqtt/pkg/codes"
+	"github.com/lab5e/lmqtt/pkg/codes"
 )
 
 // Error type

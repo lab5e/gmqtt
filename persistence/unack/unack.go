@@ -1,7 +1,7 @@
 package unack
 
 import (
-	"github.com/lab5e/gmqtt/pkg/packets"
+	"github.com/lab5e/lmqtt/pkg/packets"
 )
 
 // Store represents a unack store for one client.

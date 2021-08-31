@@ -40,19 +40,14 @@ func DefaultConfig() Config {
 	c := Config{
 		Listeners: DefaultListeners,
 		MQTT:      DefaultMQTTConfig,
-		API:       DefaultAPI,
 		Log: LogConfig{
 			Level:  "info",
 			Format: "text",
 		},
-		Plugins:           make(pluginConfig),
 		Persistence:       DefaultPersistenceConfig,
 		TopicAliasManager: DefaultTopicAliasManager,
 	}
 
-	for name, v := range defaultPluginConfig {
-		c.Plugins[name] = v
-	}
 	return c
 }
 
@@ -60,13 +55,9 @@ var DefaultListeners = []*ListenerConfig{
 	{
 		Address:    "0.0.0.0:1883",
 		TLSOptions: nil,
-		Websocket:  nil,
 	},
 	{
 		Address: "0.0.0.0:8883",
-		Websocket: &WebsocketOptions{
-			Path: "/",
-		},
 	},
 }
 
@@ -90,34 +81,12 @@ func (l LogConfig) Validate() error {
 	return nil
 }
 
-// pluginConfig stores the plugin default configuration, key by the plugin name.
-// If the plugin has default configuration, it should call RegisterDefaultPluginConfig in it's init function to register.
-type pluginConfig map[string]Configuration
-
-func (p pluginConfig) UnmarshalYAML(unmarshal func(interface{}) error) error {
-	for _, v := range p {
-		err := unmarshal(v)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
 // Config is the configration for gmqttd.
 type Config struct {
-	Listeners []*ListenerConfig `yaml:"listeners"`
-	API       API               `yaml:"api"`
-	MQTT      MQTT              `yaml:"mqtt,omitempty"`
-	GRPC      GRPC              `yaml:"gRPC"`
-	Log       LogConfig         `yaml:"log"`
-	PidFile   string            `yaml:"pid_file"`
-	ConfigDir string            `yaml:"config_dir"`
-	Plugins   pluginConfig      `yaml:"plugins"`
-	// PluginOrder is a slice that contains the name of the plugin which will be loaded.
-	// Giving a correct order to the slice is significant,
-	// because it represents the loading order which affect the behavior of the broker.
-	PluginOrder       []string          `yaml:"plugin_order"`
+	Listeners         []*ListenerConfig `yaml:"listeners"`
+	MQTT              MQTT              `yaml:"mqtt,omitempty"`
+	Log               LogConfig         `yaml:"log"`
+	ConfigDir         string            `yaml:"config_dir"`
 	Persistence       Persistence       `yaml:"persistence"`
 	TopicAliasManager TopicAliasManager `yaml:"topic_alias_manager"`
 }
@@ -140,11 +109,6 @@ type TLSOptions struct {
 type ListenerConfig struct {
 	Address     string `yaml:"address"`
 	*TLSOptions `yaml:"tls"`
-	Websocket   *WebsocketOptions `yaml:"websocket"`
-}
-
-type WebsocketOptions struct {
-	Path string `yaml:"path"`
 }
 
 func (c *Config) UnmarshalYAML(unmarshal func(interface{}) error) error {
@@ -157,28 +121,12 @@ func (c *Config) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	if raw.MQTT == emptyMQTT {
 		raw.MQTT = DefaultMQTTConfig
 	}
-	if len(raw.Plugins) == 0 {
-		raw.Plugins = make(pluginConfig)
-		for name, v := range defaultPluginConfig {
-			raw.Plugins[name] = v
-		}
-	} else {
-		for name, v := range raw.Plugins {
-			if v == nil {
-				raw.Plugins[name] = defaultPluginConfig[name]
-			}
-		}
-	}
 	*c = Config(raw)
 	return nil
 }
 
 func (c Config) Validate() (err error) {
 	err = c.Log.Validate()
-	if err != nil {
-		return err
-	}
-	err = c.API.Validate()
 	if err != nil {
 		return err
 	}
@@ -189,12 +137,6 @@ func (c Config) Validate() (err error) {
 	err = c.Persistence.Validate()
 	if err != nil {
 		return err
-	}
-	for _, conf := range c.Plugins {
-		err := conf.Validate()
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }

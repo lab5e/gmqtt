@@ -4,8 +4,8 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/lab5e/gmqtt"
-	"github.com/lab5e/gmqtt/persistence/subscription"
+	"github.com/lab5e/lmqtt/persistence/subscription"
+	"github.com/lab5e/lmqtt/pkg/entities"
 )
 
 var _ subscription.Store = (*TrieDB)(nil)
@@ -265,7 +265,7 @@ func NewStore() *TrieDB {
 }
 
 // SubscribeLocked is the non thread-safe version of Subscribe
-func (db *TrieDB) SubscribeLocked(clientID string, subscriptions ...*gmqtt.Subscription) subscription.SubscribeResult {
+func (db *TrieDB) SubscribeLocked(clientID string, subscriptions ...*entities.Subscription) subscription.SubscribeResult {
 	var node *topicNode
 	var index map[string]map[string]*topicNode
 	rs := make(subscription.SubscribeResult, len(subscriptions))
@@ -302,7 +302,7 @@ func (db *TrieDB) SubscribeLocked(clientID string, subscriptions ...*gmqtt.Subsc
 }
 
 // SubscribeLocked add subscriptions for the client
-func (db *TrieDB) Subscribe(clientID string, subscriptions ...*gmqtt.Subscription) (subscription.SubscribeResult, error) {
+func (db *TrieDB) Subscribe(clientID string, subscriptions ...*entities.Subscription) (subscription.SubscribeResult, error) {
 	db.Lock()
 	defer db.Unlock()
 	return db.SubscribeLocked(clientID, subscriptions...), nil

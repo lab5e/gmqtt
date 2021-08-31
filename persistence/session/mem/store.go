@@ -3,8 +3,8 @@ package mem
 import (
 	"sync"
 
-	"github.com/lab5e/gmqtt"
-	"github.com/lab5e/gmqtt/persistence/session"
+	"github.com/lab5e/lmqtt/persistence/session"
+	"github.com/lab5e/lmqtt/pkg/entities"
 )
 
 var _ session.Store = (*Store)(nil)
@@ -12,16 +12,16 @@ var _ session.Store = (*Store)(nil)
 func New() *Store {
 	return &Store{
 		mu:   sync.Mutex{},
-		sess: make(map[string]*gmqtt.Session),
+		sess: make(map[string]*entities.Session),
 	}
 }
 
 type Store struct {
 	mu   sync.Mutex
-	sess map[string]*gmqtt.Session
+	sess map[string]*entities.Session
 }
 
-func (s *Store) Set(session *gmqtt.Session) error {
+func (s *Store) Set(session *entities.Session) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	s.sess[session.ClientID] = session
@@ -35,13 +35,13 @@ func (s *Store) Remove(clientID string) error {
 	return nil
 }
 
-func (s *Store) Get(clientID string) (*gmqtt.Session, error) {
+func (s *Store) Get(clientID string) (*entities.Session, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	return s.sess[clientID], nil
 }
 
-func (s *Store) GetAll() ([]*gmqtt.Session, error) {
+func (s *Store) GetAll() ([]*entities.Session, error) {
 	return nil, nil
 }
 

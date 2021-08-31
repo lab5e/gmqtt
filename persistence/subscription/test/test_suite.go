@@ -6,13 +6,13 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/lab5e/gmqtt"
-	"github.com/lab5e/gmqtt/persistence/subscription"
-	"github.com/lab5e/gmqtt/pkg/packets"
+	"github.com/lab5e/lmqtt/persistence/subscription"
+	"github.com/lab5e/lmqtt/pkg/entities"
+	"github.com/lab5e/lmqtt/pkg/packets"
 )
 
 var (
-	topicA = &gmqtt.Subscription{
+	topicA = &entities.Subscription{
 		TopicFilter: "topic/A",
 		ID:          1,
 
@@ -22,7 +22,7 @@ var (
 		RetainHandling:    1,
 	}
 
-	topicB = &gmqtt.Subscription{
+	topicB = &entities.Subscription{
 		TopicFilter: "topic/B",
 
 		QoS:               1,
@@ -31,7 +31,7 @@ var (
 		RetainHandling:    0,
 	}
 
-	systemTopicA = &gmqtt.Subscription{
+	systemTopicA = &entities.Subscription{
 		TopicFilter: "$topic/A",
 		ID:          1,
 
@@ -41,7 +41,7 @@ var (
 		RetainHandling:    1,
 	}
 
-	systemTopicB = &gmqtt.Subscription{
+	systemTopicB = &entities.Subscription{
 		TopicFilter: "$topic/B",
 
 		QoS:               1,
@@ -50,7 +50,7 @@ var (
 		RetainHandling:    0,
 	}
 
-	sharedTopicA1 = &gmqtt.Subscription{
+	sharedTopicA1 = &entities.Subscription{
 		ShareName:   "name1",
 		TopicFilter: "topic/A",
 		ID:          1,
@@ -61,7 +61,7 @@ var (
 		RetainHandling:    1,
 	}
 
-	sharedTopicB1 = &gmqtt.Subscription{
+	sharedTopicB1 = &entities.Subscription{
 		ShareName:   "name1",
 		TopicFilter: "topic/B",
 		ID:          1,
@@ -72,7 +72,7 @@ var (
 		RetainHandling:    1,
 	}
 
-	sharedTopicA2 = &gmqtt.Subscription{
+	sharedTopicA2 = &entities.Subscription{
 		ShareName:   "name2",
 		TopicFilter: "topic/A",
 		ID:          1,
@@ -83,7 +83,7 @@ var (
 		RetainHandling:    1,
 	}
 
-	sharedTopicB2 = &gmqtt.Subscription{
+	sharedTopicB2 = &entities.Subscription{
 		ShareName:   "name2",
 		TopicFilter: "topic/B",
 		ID:          1,
@@ -97,18 +97,18 @@ var (
 
 var testSubs = []struct {
 	clientID string
-	subs     []*gmqtt.Subscription
+	subs     []*entities.Subscription
 }{
 	// non-share and non-system subscription
 	{
 
 		clientID: "client1",
-		subs: []*gmqtt.Subscription{
+		subs: []*entities.Subscription{
 			topicA, topicB,
 		},
 	}, {
 		clientID: "client2",
-		subs: []*gmqtt.Subscription{
+		subs: []*entities.Subscription{
 			topicA, topicB,
 		},
 	},
@@ -116,26 +116,26 @@ var testSubs = []struct {
 	{
 
 		clientID: "client1",
-		subs: []*gmqtt.Subscription{
+		subs: []*entities.Subscription{
 			systemTopicA, systemTopicB,
 		},
 	}, {
 
 		clientID: "client2",
-		subs: []*gmqtt.Subscription{
+		subs: []*entities.Subscription{
 			systemTopicA, systemTopicB,
 		},
 	},
 	// share subscription
 	{
 		clientID: "client1",
-		subs: []*gmqtt.Subscription{
+		subs: []*entities.Subscription{
 			sharedTopicA1, sharedTopicB1, sharedTopicA2, sharedTopicB2,
 		},
 	},
 	{
 		clientID: "client2",
-		subs: []*gmqtt.Subscription{
+		subs: []*entities.Subscription{
 			sharedTopicA1, sharedTopicB1, sharedTopicA2, sharedTopicB2,
 		},
 	},
@@ -315,20 +315,20 @@ func testGetTopic(t *testing.T, store subscription.Store) {
 func testTopicMatch(t *testing.T, store subscription.Store) {
 	a := assert.New(t)
 	rs := subscription.GetTopicMatched(store, topicA.TopicFilter, subscription.TypeAll)
-	a.ElementsMatch([]*gmqtt.Subscription{topicA, sharedTopicA1, sharedTopicA2}, rs["client1"])
-	a.ElementsMatch([]*gmqtt.Subscription{topicA, sharedTopicA1, sharedTopicA2}, rs["client2"])
+	a.ElementsMatch([]*entities.Subscription{topicA, sharedTopicA1, sharedTopicA2}, rs["client1"])
+	a.ElementsMatch([]*entities.Subscription{topicA, sharedTopicA1, sharedTopicA2}, rs["client2"])
 
 	rs = subscription.GetTopicMatched(store, topicA.TopicFilter, subscription.TypeNonShared)
-	a.ElementsMatch([]*gmqtt.Subscription{topicA}, rs["client1"])
-	a.ElementsMatch([]*gmqtt.Subscription{topicA}, rs["client2"])
+	a.ElementsMatch([]*entities.Subscription{topicA}, rs["client1"])
+	a.ElementsMatch([]*entities.Subscription{topicA}, rs["client2"])
 
 	rs = subscription.GetTopicMatched(store, topicA.TopicFilter, subscription.TypeShared)
-	a.ElementsMatch([]*gmqtt.Subscription{sharedTopicA1, sharedTopicA2}, rs["client1"])
-	a.ElementsMatch([]*gmqtt.Subscription{sharedTopicA1, sharedTopicA2}, rs["client2"])
+	a.ElementsMatch([]*entities.Subscription{sharedTopicA1, sharedTopicA2}, rs["client1"])
+	a.ElementsMatch([]*entities.Subscription{sharedTopicA1, sharedTopicA2}, rs["client2"])
 
 	rs = subscription.GetTopicMatched(store, systemTopicA.TopicFilter, subscription.TypeSYS)
-	a.ElementsMatch([]*gmqtt.Subscription{systemTopicA}, rs["client1"])
-	a.ElementsMatch([]*gmqtt.Subscription{systemTopicA}, rs["client2"])
+	a.ElementsMatch([]*entities.Subscription{systemTopicA}, rs["client1"])
+	a.ElementsMatch([]*entities.Subscription{systemTopicA}, rs["client2"])
 
 }
 func testUnsubscribe(t *testing.T, store subscription.Store) {
@@ -336,11 +336,11 @@ func testUnsubscribe(t *testing.T, store subscription.Store) {
 	a.Nil(store.Unsubscribe("client1", topicA.TopicFilter))
 	rs := subscription.Get(store, topicA.TopicFilter, subscription.TypeAll)
 	a.Nil(rs["client1"])
-	a.ElementsMatch([]*gmqtt.Subscription{topicA}, rs["client2"])
+	a.ElementsMatch([]*entities.Subscription{topicA}, rs["client2"])
 	a.Nil(store.UnsubscribeAll("client2"))
 	a.Nil(store.UnsubscribeAll("client1"))
 	var iterationCalled bool
-	store.Iterate(func(clientID string, sub *gmqtt.Subscription) bool {
+	store.Iterate(func(clientID string, sub *entities.Subscription) bool {
 		iterationCalled = true
 		return true
 	}, subscription.IterationOptions{Type: subscription.TypeAll})
@@ -351,7 +351,7 @@ func testIterate(t *testing.T, store subscription.Store) {
 
 	var iterationCalled bool
 	// invalid subscription.IterationOptions
-	store.Iterate(func(clientID string, sub *gmqtt.Subscription) bool {
+	store.Iterate(func(clientID string, sub *entities.Subscription) bool {
 		iterationCalled = true
 		return true
 	}, subscription.IterationOptions{})
@@ -364,18 +364,18 @@ func testIterateNonShared(t *testing.T, store subscription.Store) {
 	a := assert.New(t)
 	// iterate all non-shared subscriptions.
 	got := make(subscription.ClientSubscriptions)
-	store.Iterate(func(clientID string, sub *gmqtt.Subscription) bool {
+	store.Iterate(func(clientID string, sub *entities.Subscription) bool {
 		got[clientID] = append(got[clientID], sub)
 		return true
 	}, subscription.IterationOptions{
 		Type: subscription.TypeNonShared,
 	})
-	a.ElementsMatch([]*gmqtt.Subscription{topicA, topicB}, got["client1"])
-	a.ElementsMatch([]*gmqtt.Subscription{topicA, topicB}, got["client2"])
+	a.ElementsMatch([]*entities.Subscription{topicA, topicB}, got["client1"])
+	a.ElementsMatch([]*entities.Subscription{topicA, topicB}, got["client2"])
 
 	// iterate all non-shared subscriptions with ClientID option.
 	got = make(subscription.ClientSubscriptions)
-	store.Iterate(func(clientID string, sub *gmqtt.Subscription) bool {
+	store.Iterate(func(clientID string, sub *entities.Subscription) bool {
 		got[clientID] = append(got[clientID], sub)
 		return true
 	}, subscription.IterationOptions{
@@ -383,12 +383,12 @@ func testIterateNonShared(t *testing.T, store subscription.Store) {
 		ClientID: "client1",
 	})
 
-	a.ElementsMatch([]*gmqtt.Subscription{topicA, topicB}, got["client1"])
+	a.ElementsMatch([]*entities.Subscription{topicA, topicB}, got["client1"])
 	a.Len(got["client2"], 0)
 
 	// iterate all non-shared subscriptions that matched given topic name.
 	got = make(subscription.ClientSubscriptions)
-	store.Iterate(func(clientID string, sub *gmqtt.Subscription) bool {
+	store.Iterate(func(clientID string, sub *entities.Subscription) bool {
 		got[clientID] = append(got[clientID], sub)
 		return true
 	}, subscription.IterationOptions{
@@ -396,12 +396,12 @@ func testIterateNonShared(t *testing.T, store subscription.Store) {
 		MatchType: subscription.MatchName,
 		TopicName: topicA.TopicFilter,
 	})
-	a.ElementsMatch([]*gmqtt.Subscription{topicA}, got["client1"])
-	a.ElementsMatch([]*gmqtt.Subscription{topicA}, got["client2"])
+	a.ElementsMatch([]*entities.Subscription{topicA}, got["client1"])
+	a.ElementsMatch([]*entities.Subscription{topicA}, got["client2"])
 
 	// iterate all non-shared subscriptions that matched given topic name and client id
 	got = make(subscription.ClientSubscriptions)
-	store.Iterate(func(clientID string, sub *gmqtt.Subscription) bool {
+	store.Iterate(func(clientID string, sub *entities.Subscription) bool {
 		got[clientID] = append(got[clientID], sub)
 		return true
 	}, subscription.IterationOptions{
@@ -410,12 +410,12 @@ func testIterateNonShared(t *testing.T, store subscription.Store) {
 		TopicName: topicA.TopicFilter,
 		ClientID:  "client1",
 	})
-	a.ElementsMatch([]*gmqtt.Subscription{topicA}, got["client1"])
+	a.ElementsMatch([]*entities.Subscription{topicA}, got["client1"])
 	a.Len(got["client2"], 0)
 
 	// iterate all non-shared subscriptions that matched given topic filter.
 	got = make(subscription.ClientSubscriptions)
-	store.Iterate(func(clientID string, sub *gmqtt.Subscription) bool {
+	store.Iterate(func(clientID string, sub *entities.Subscription) bool {
 		got[clientID] = append(got[clientID], sub)
 		return true
 	}, subscription.IterationOptions{
@@ -423,12 +423,12 @@ func testIterateNonShared(t *testing.T, store subscription.Store) {
 		MatchType: subscription.MatchFilter,
 		TopicName: topicA.TopicFilter,
 	})
-	a.ElementsMatch([]*gmqtt.Subscription{topicA}, got["client1"])
-	a.ElementsMatch([]*gmqtt.Subscription{topicA}, got["client2"])
+	a.ElementsMatch([]*entities.Subscription{topicA}, got["client1"])
+	a.ElementsMatch([]*entities.Subscription{topicA}, got["client2"])
 
 	// iterate all non-shared subscriptions that matched given topic filter and client id
 	got = make(subscription.ClientSubscriptions)
-	store.Iterate(func(clientID string, sub *gmqtt.Subscription) bool {
+	store.Iterate(func(clientID string, sub *entities.Subscription) bool {
 		got[clientID] = append(got[clientID], sub)
 		return true
 	}, subscription.IterationOptions{
@@ -437,37 +437,37 @@ func testIterateNonShared(t *testing.T, store subscription.Store) {
 		TopicName: topicA.TopicFilter,
 		ClientID:  "client1",
 	})
-	a.ElementsMatch([]*gmqtt.Subscription{topicA}, got["client1"])
+	a.ElementsMatch([]*entities.Subscription{topicA}, got["client1"])
 	a.Len(got["client2"], 0)
 }
 func testIterateShared(t *testing.T, store subscription.Store) {
 	a := assert.New(t)
 	// iterate all shared subscriptions.
 	got := make(subscription.ClientSubscriptions)
-	store.Iterate(func(clientID string, sub *gmqtt.Subscription) bool {
+	store.Iterate(func(clientID string, sub *entities.Subscription) bool {
 		got[clientID] = append(got[clientID], sub)
 		return true
 	}, subscription.IterationOptions{
 		Type: subscription.TypeShared,
 	})
-	a.ElementsMatch([]*gmqtt.Subscription{sharedTopicA1, sharedTopicA2, sharedTopicB1, sharedTopicB2}, got["client1"])
-	a.ElementsMatch([]*gmqtt.Subscription{sharedTopicA1, sharedTopicA2, sharedTopicB1, sharedTopicB2}, got["client2"])
+	a.ElementsMatch([]*entities.Subscription{sharedTopicA1, sharedTopicA2, sharedTopicB1, sharedTopicB2}, got["client1"])
+	a.ElementsMatch([]*entities.Subscription{sharedTopicA1, sharedTopicA2, sharedTopicB1, sharedTopicB2}, got["client2"])
 
 	// iterate all shared subscriptions with ClientID option.
 	got = make(subscription.ClientSubscriptions)
-	store.Iterate(func(clientID string, sub *gmqtt.Subscription) bool {
+	store.Iterate(func(clientID string, sub *entities.Subscription) bool {
 		got[clientID] = append(got[clientID], sub)
 		return true
 	}, subscription.IterationOptions{
 		Type:     subscription.TypeShared,
 		ClientID: "client1",
 	})
-	a.ElementsMatch([]*gmqtt.Subscription{sharedTopicA1, sharedTopicA2, sharedTopicB1, sharedTopicB2}, got["client1"])
+	a.ElementsMatch([]*entities.Subscription{sharedTopicA1, sharedTopicA2, sharedTopicB1, sharedTopicB2}, got["client1"])
 	a.Len(got["client2"], 0)
 
 	// iterate all shared subscriptions that matched given topic filter.
 	got = make(subscription.ClientSubscriptions)
-	store.Iterate(func(clientID string, sub *gmqtt.Subscription) bool {
+	store.Iterate(func(clientID string, sub *entities.Subscription) bool {
 		got[clientID] = append(got[clientID], sub)
 		return true
 	}, subscription.IterationOptions{
@@ -475,12 +475,12 @@ func testIterateShared(t *testing.T, store subscription.Store) {
 		MatchType: subscription.MatchName,
 		TopicName: "$share/" + sharedTopicA1.ShareName + "/" + sharedTopicA1.TopicFilter,
 	})
-	a.ElementsMatch([]*gmqtt.Subscription{sharedTopicA1}, got["client1"])
-	a.ElementsMatch([]*gmqtt.Subscription{sharedTopicA1}, got["client2"])
+	a.ElementsMatch([]*entities.Subscription{sharedTopicA1}, got["client1"])
+	a.ElementsMatch([]*entities.Subscription{sharedTopicA1}, got["client2"])
 
 	// iterate all shared subscriptions that matched given topic filter and client id
 	got = make(subscription.ClientSubscriptions)
-	store.Iterate(func(clientID string, sub *gmqtt.Subscription) bool {
+	store.Iterate(func(clientID string, sub *entities.Subscription) bool {
 		got[clientID] = append(got[clientID], sub)
 		return true
 	}, subscription.IterationOptions{
@@ -489,12 +489,12 @@ func testIterateShared(t *testing.T, store subscription.Store) {
 		TopicName: "$share/" + sharedTopicA1.ShareName + "/" + sharedTopicA1.TopicFilter,
 		ClientID:  "client1",
 	})
-	a.ElementsMatch([]*gmqtt.Subscription{sharedTopicA1}, got["client1"])
+	a.ElementsMatch([]*entities.Subscription{sharedTopicA1}, got["client1"])
 	a.Len(got["client2"], 0)
 
 	// iterate all shared subscriptions that matched given topic name.
 	got = make(subscription.ClientSubscriptions)
-	store.Iterate(func(clientID string, sub *gmqtt.Subscription) bool {
+	store.Iterate(func(clientID string, sub *entities.Subscription) bool {
 		got[clientID] = append(got[clientID], sub)
 		return true
 	}, subscription.IterationOptions{
@@ -502,12 +502,12 @@ func testIterateShared(t *testing.T, store subscription.Store) {
 		MatchType: subscription.MatchFilter,
 		TopicName: sharedTopicA1.TopicFilter,
 	})
-	a.ElementsMatch([]*gmqtt.Subscription{sharedTopicA1, sharedTopicA2}, got["client1"])
-	a.ElementsMatch([]*gmqtt.Subscription{sharedTopicA1, sharedTopicA2}, got["client2"])
+	a.ElementsMatch([]*entities.Subscription{sharedTopicA1, sharedTopicA2}, got["client1"])
+	a.ElementsMatch([]*entities.Subscription{sharedTopicA1, sharedTopicA2}, got["client2"])
 
 	// iterate all shared subscriptions that matched given topic name and clientID
 	got = make(subscription.ClientSubscriptions)
-	store.Iterate(func(clientID string, sub *gmqtt.Subscription) bool {
+	store.Iterate(func(clientID string, sub *entities.Subscription) bool {
 		got[clientID] = append(got[clientID], sub)
 		return true
 	}, subscription.IterationOptions{
@@ -516,7 +516,7 @@ func testIterateShared(t *testing.T, store subscription.Store) {
 		TopicName: sharedTopicA1.TopicFilter,
 		ClientID:  "client1",
 	})
-	a.ElementsMatch([]*gmqtt.Subscription{sharedTopicA1, sharedTopicA2}, got["client1"])
+	a.ElementsMatch([]*entities.Subscription{sharedTopicA1, sharedTopicA2}, got["client1"])
 	a.Len(got["client2"], 0)
 
 }
@@ -524,30 +524,30 @@ func testIterateSystem(t *testing.T, store subscription.Store) {
 	a := assert.New(t)
 	// iterate all system subscriptions.
 	got := make(subscription.ClientSubscriptions)
-	store.Iterate(func(clientID string, sub *gmqtt.Subscription) bool {
+	store.Iterate(func(clientID string, sub *entities.Subscription) bool {
 		got[clientID] = append(got[clientID], sub)
 		return true
 	}, subscription.IterationOptions{
 		Type: subscription.TypeSYS,
 	})
-	a.ElementsMatch([]*gmqtt.Subscription{systemTopicA, systemTopicB}, got["client1"])
-	a.ElementsMatch([]*gmqtt.Subscription{systemTopicA, systemTopicB}, got["client2"])
+	a.ElementsMatch([]*entities.Subscription{systemTopicA, systemTopicB}, got["client1"])
+	a.ElementsMatch([]*entities.Subscription{systemTopicA, systemTopicB}, got["client2"])
 
 	// iterate all system subscriptions with ClientID option.
 	got = make(subscription.ClientSubscriptions)
-	store.Iterate(func(clientID string, sub *gmqtt.Subscription) bool {
+	store.Iterate(func(clientID string, sub *entities.Subscription) bool {
 		got[clientID] = append(got[clientID], sub)
 		return true
 	}, subscription.IterationOptions{
 		Type:     subscription.TypeSYS,
 		ClientID: "client1",
 	})
-	a.ElementsMatch([]*gmqtt.Subscription{systemTopicA, systemTopicB}, got["client1"])
+	a.ElementsMatch([]*entities.Subscription{systemTopicA, systemTopicB}, got["client1"])
 	a.Len(got["client2"], 0)
 
 	// iterate all system subscriptions that matched given topic filter.
 	got = make(subscription.ClientSubscriptions)
-	store.Iterate(func(clientID string, sub *gmqtt.Subscription) bool {
+	store.Iterate(func(clientID string, sub *entities.Subscription) bool {
 		got[clientID] = append(got[clientID], sub)
 		return true
 	}, subscription.IterationOptions{
@@ -555,12 +555,12 @@ func testIterateSystem(t *testing.T, store subscription.Store) {
 		MatchType: subscription.MatchName,
 		TopicName: systemTopicA.TopicFilter,
 	})
-	a.ElementsMatch([]*gmqtt.Subscription{systemTopicA}, got["client1"])
-	a.ElementsMatch([]*gmqtt.Subscription{systemTopicA}, got["client2"])
+	a.ElementsMatch([]*entities.Subscription{systemTopicA}, got["client1"])
+	a.ElementsMatch([]*entities.Subscription{systemTopicA}, got["client2"])
 
 	// iterate all system subscriptions that matched given topic filter and client id
 	got = make(subscription.ClientSubscriptions)
-	store.Iterate(func(clientID string, sub *gmqtt.Subscription) bool {
+	store.Iterate(func(clientID string, sub *entities.Subscription) bool {
 		got[clientID] = append(got[clientID], sub)
 		return true
 	}, subscription.IterationOptions{
@@ -569,12 +569,12 @@ func testIterateSystem(t *testing.T, store subscription.Store) {
 		TopicName: systemTopicA.TopicFilter,
 		ClientID:  "client1",
 	})
-	a.ElementsMatch([]*gmqtt.Subscription{systemTopicA}, got["client1"])
+	a.ElementsMatch([]*entities.Subscription{systemTopicA}, got["client1"])
 	a.Len(got["client2"], 0)
 
 	// iterate all system subscriptions that matched given topic name.
 	got = make(subscription.ClientSubscriptions)
-	store.Iterate(func(clientID string, sub *gmqtt.Subscription) bool {
+	store.Iterate(func(clientID string, sub *entities.Subscription) bool {
 		got[clientID] = append(got[clientID], sub)
 		return true
 	}, subscription.IterationOptions{
@@ -582,12 +582,12 @@ func testIterateSystem(t *testing.T, store subscription.Store) {
 		MatchType: subscription.MatchFilter,
 		TopicName: systemTopicA.TopicFilter,
 	})
-	a.ElementsMatch([]*gmqtt.Subscription{systemTopicA}, got["client1"])
-	a.ElementsMatch([]*gmqtt.Subscription{systemTopicA}, got["client2"])
+	a.ElementsMatch([]*entities.Subscription{systemTopicA}, got["client1"])
+	a.ElementsMatch([]*entities.Subscription{systemTopicA}, got["client2"])
 
 	// iterate all system subscriptions that matched given topic name and clientID
 	got = make(subscription.ClientSubscriptions)
-	store.Iterate(func(clientID string, sub *gmqtt.Subscription) bool {
+	store.Iterate(func(clientID string, sub *entities.Subscription) bool {
 		got[clientID] = append(got[clientID], sub)
 		return true
 	}, subscription.IterationOptions{
@@ -596,6 +596,6 @@ func testIterateSystem(t *testing.T, store subscription.Store) {
 		TopicName: systemTopicA.TopicFilter,
 		ClientID:  "client1",
 	})
-	a.ElementsMatch([]*gmqtt.Subscription{systemTopicA}, got["client1"])
+	a.ElementsMatch([]*entities.Subscription{systemTopicA}, got["client1"])
 	a.Len(got["client2"], 0)
 }

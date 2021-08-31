@@ -3,19 +3,19 @@ package fifo
 import (
 	"container/list"
 
-	"github.com/lab5e/gmqtt/config"
-	"github.com/lab5e/gmqtt/pkg/packets"
-	"github.com/lab5e/gmqtt/server"
+	"github.com/lab5e/lmqtt/config"
+	"github.com/lab5e/lmqtt/pkg/lmqtt"
+	"github.com/lab5e/lmqtt/pkg/packets"
 )
 
-var _ server.TopicAliasManager = (*Queue)(nil)
+var _ lmqtt.TopicAliasManager = (*Queue)(nil)
 
 func init() {
-	server.RegisterTopicAliasMgrFactory("fifo", New)
+	lmqtt.RegisterTopicAliasMgrFactory("fifo", New)
 }
 
 // New is the constructor of Queue.
-func New(config config.Config, maxAlias uint16, clientID string) server.TopicAliasManager {
+func New(config config.Config, maxAlias uint16, clientID string) lmqtt.TopicAliasManager {
 	return &Queue{
 		clientID: clientID,
 		topicAlias: &topicAlias{

@@ -6,7 +6,7 @@ package unack
 
 import (
 	gomock "github.com/golang/mock/gomock"
-	packets "github.com/lab5e/gmqtt/pkg/packets"
+	packets "github.com/lab5e/lmqtt/pkg/packets"
 	reflect "reflect"
 )
 
