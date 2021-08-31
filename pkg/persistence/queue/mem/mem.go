@@ -11,6 +11,7 @@ import (
 
 var _ queue.Store = (*Queue)(nil)
 
+// Options is the options for the memory queue
 type Options struct {
 	MaxQueuedMsg    int
 	InflightExpiry  time.Duration
@@ -18,6 +19,7 @@ type Options struct {
 	DefaultNotifier queue.Notifier
 }
 
+// Queue is a memory backed queue store
 type Queue struct {
 	cond           *sync.Cond
 	clientID       string

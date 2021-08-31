@@ -24,7 +24,7 @@ func (s *MemorySuite) TestQueue() {
 	a := assert.New(s.T())
 	qs, err := s.p.NewQueueStore(queue_test.ServerConfig, queue_test.Notifier, queue_test.ClientID)
 	a.Nil(err)
-	queue_test.TestQueue(s.T(), qs)
+	queue_test.Suite(s.T(), qs)
 }
 func (s *MemorySuite) TestSubscription() {
 	newFn := func() subscription.Store {

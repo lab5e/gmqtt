@@ -16,13 +16,16 @@ import (
 )
 
 var (
+	// ServerConfig is the server configuration for the queue store
 	ServerConfig = config.Config{
 		MQTT: config.MQTT{
 			MaxQueuedMsg:   5,
 			InflightExpiry: 2 * time.Second,
 		},
 	}
+	// ClientID is the client ID used in the queue store
 	ClientID = "cid"
+	// Notifier is the test notifier for the test suite
 	Notifier = &testNotifier{}
 )
 
@@ -200,9 +203,11 @@ func reconnect(a *assert.Assertions, cleanStart bool, store queue.Store) {
 	}))
 }
 
+// New creates a persistence store
 type New func(config config.Config, hooks lmqtt.Hooks) (lmqtt.Persistence, error)
 
-func TestQueue(t *testing.T, store queue.Store) {
+// Suite runs tests on a queue store
+func Suite(t *testing.T, store queue.Store) {
 	initDrop()
 	a := assert.New(t)
 	ctrl := gomock.NewController(t)
