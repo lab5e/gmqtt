@@ -8,8 +8,10 @@ import (
 	"github.com/lab5e/lmqtt/pkg/persistence/unack"
 )
 
+// NewPersistence creates a new persistence layer
 type NewPersistence func(config config.Config) (Persistence, error)
 
+// Persistence is the storage layer
 type Persistence interface {
 	Open() error
 	NewQueueStore(config config.Config, defaultNotifier queue.Notifier, clientID string) (queue.Store, error)

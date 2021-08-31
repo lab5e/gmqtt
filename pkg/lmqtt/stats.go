@@ -319,6 +319,7 @@ func (c *ConnectionStats) copy() *ConnectionStats {
 	}
 }
 
+// DroppedTotal is the stats for dropped messages
 type DroppedTotal struct {
 	Internal             uint64
 	ExceedsMaxPacketSize uint64
@@ -327,12 +328,14 @@ type DroppedTotal struct {
 	InflightExpired      uint64
 }
 
+// MessageQosStats is the stats for QoS
 type MessageQosStats struct {
 	DroppedTotal  DroppedTotal
 	ReceivedTotal uint64
 	SentTotal     uint64
 }
 
+// GetDroppedTotal returns the total number of dropped messages
 func (m *MessageQosStats) GetDroppedTotal() uint64 {
 	return m.DroppedTotal.Internal + m.DroppedTotal.Expired + m.DroppedTotal.ExceedsMaxPacketSize + m.DroppedTotal.QueueFull + m.DroppedTotal.InflightExpired
 }
@@ -346,6 +349,7 @@ type MessageStats struct {
 	QueuedCurrent   uint64
 }
 
+// GetDroppedTotal returns the total number of dropped messages
 func (m *MessageStats) GetDroppedTotal() uint64 {
 	return m.Qos0.GetDroppedTotal() + m.Qos1.GetDroppedTotal() + m.Qos2.GetDroppedTotal()
 }
@@ -447,6 +451,7 @@ type ClientStats struct {
 	SubscriptionStats subscription.Stats
 }
 
+// GetDroppedTotal returns the total number of dropped messages
 func (c ClientStats) GetDroppedTotal() uint64 {
 	return c.MessageStats.Qos0.GetDroppedTotal() + c.MessageStats.Qos1.GetDroppedTotal() + c.MessageStats.Qos2.GetDroppedTotal()
 }

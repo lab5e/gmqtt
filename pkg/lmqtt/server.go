@@ -40,6 +40,7 @@ func defaultIterateOptions(topicName string) subscription.IterationOptions {
 	}
 }
 
+// RegisterPersistenceFactory registers a new persistence factory method
 func RegisterPersistenceFactory(name string, new NewPersistence) {
 	if _, ok := persistenceFactories[name]; ok {
 		panic("duplicated persistence factory: " + name)
@@ -47,6 +48,7 @@ func RegisterPersistenceFactory(name string, new NewPersistence) {
 	persistenceFactories[name] = new
 }
 
+// RegisterTopicAliasMgrFactory registters a new topic alias manager factory method
 func RegisterTopicAliasMgrFactory(name string, new NewTopicAliasManager) {
 	if _, ok := topicAliasMgrFactory[name]; ok {
 		panic("duplicated topic alias manager factory: " + name)
@@ -198,8 +200,10 @@ func (srv *server) Publisher() Publisher {
 	return srv.publishService
 }
 
+// DeliveryMode is the delivery modes supported
 type DeliveryMode = string
 
+// Supported delivery methods
 const (
 	Overlap  DeliveryMode = "overlap"
 	OnlyOnce DeliveryMode = "onlyonce"

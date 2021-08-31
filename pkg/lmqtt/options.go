@@ -6,6 +6,7 @@ import (
 	"github.com/lab5e/lmqtt/pkg/config"
 )
 
+// Options is the options for a the server
 type Options func(srv *server)
 
 // WithConfig set the config of the server
