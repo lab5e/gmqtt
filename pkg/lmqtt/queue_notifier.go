@@ -2,8 +2,7 @@ package lmqtt
 
 import (
 	"context"
-
-	"go.uber.org/zap"
+	"log"
 
 	"github.com/lab5e/lmqtt/persistence/queue"
 	"github.com/lab5e/lmqtt/pkg/entities"
@@ -28,7 +27,7 @@ func defaultNotifier(dropHook OnMsgDropped, sts *statsManager, clientID string) 
 
 func (q *queueNotifier) notifyDropped(msg *entities.Message, err error) {
 	cid := q.cli.opts.ClientID
-	zaplog.Warn("message dropped", zap.String("client_id", cid), zap.Error(err))
+	log.Printf("message dropped  client_id=%s: %v", cid, err)
 	q.sts.messageDropped(msg.QoS, q.cli.opts.ClientID, err)
 	if q.dropHook != nil {
 		q.dropHook(context.Background(), cid, msg, err)
@@ -43,7 +42,7 @@ func (q *queueNotifier) NotifyDropped(elem *queue.Elem, err error) {
 	if pub, ok := elem.MessageWithID.(*queue.Publish); ok {
 		q.notifyDropped(pub.Message, err)
 	} else {
-		zaplog.Warn("message dropped", zap.String("client_id", cid), zap.Error(err))
+		log.Printf("message dropped  client_ud=%s: %v", cid, err)
 	}
 }
 

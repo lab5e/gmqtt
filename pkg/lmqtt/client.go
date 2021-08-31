@@ -10,6 +10,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"math"
 	"net"
 	"os"
@@ -17,9 +18,6 @@ import (
 	"sync"
 	"sync/atomic"
 	"time"
-
-	"go.uber.org/zap"
-	"go.uber.org/zap/zapcore"
 
 	"github.com/lab5e/lmqtt/config"
 	"github.com/lab5e/lmqtt/persistence/queue"
@@ -270,10 +268,8 @@ func (client *client) IsConnected() bool {
 func (client *client) setError(err error) {
 	client.errOnce.Do(func() {
 		if err != nil && err != io.EOF {
-			zaplog.Error("connection lost",
-				zap.String("client_id", client.opts.ClientID),
-				zap.String("remote_addr", client.rwc.RemoteAddr().String()),
-				zap.Error(err))
+			log.Printf("connection lost client_id=%s, remote_addr=%s: %v",
+				client.opts.ClientID, client.rwc.RemoteAddr(), err)
 			client.err = err
 			if client.version == packets.Version5 {
 				if code, ok := err.(*codes.Error); ok {
@@ -352,16 +348,10 @@ func (client *client) writeLoop() {
 }
 
 func (client *client) writePacket(packet packets.Packet) error {
-	if client.server.config.Log.DumpPacket {
-		if ce := zaplog.Check(zapcore.DebugLevel, "sending packet"); ce != nil {
-			ce.Write(
-				zap.String("packet", packet.String()),
-				zap.String("remote_addr", client.rwc.RemoteAddr().String()),
-				zap.String("client_id", client.opts.ClientID),
-			)
-		}
+	if client.server.config.DumpPacket {
+		log.Printf("sending packet  packet=%s, remote_addr=%s, client_id=%s",
+			packet, client.rwc.RemoteAddr(), client.opts.ClientID)
 	}
-
 	return client.packetWriter.WriteAndFlush(packet)
 }
 
@@ -403,7 +393,7 @@ func (client *client) readLoop() {
 		packet, err = client.packetReader.ReadPacket()
 		if err != nil {
 			if err != io.EOF && packet != nil {
-				zaplog.Error("read error", zap.String("packet_type", reflect.TypeOf(packet).String()))
+				log.Printf("read error packet_type=%s: %v", reflect.TypeOf(packet), err)
 			}
 			return
 		}
@@ -420,14 +410,9 @@ func (client *client) readLoop() {
 		client.in <- packet
 		<-client.connected
 		srv.statsManager.packetReceived(packet, client.opts.ClientID)
-		if client.server.config.Log.DumpPacket {
-			if ce := zaplog.Check(zapcore.DebugLevel, "received packet"); ce != nil {
-				ce.Write(
-					zap.String("packet", packet.String()),
-					zap.String("remote_addr", client.rwc.RemoteAddr().String()),
-					zap.String("client_id", client.opts.ClientID),
-				)
-			}
+		if client.server.config.DumpPacket {
+			log.Printf("recevied packet packet=%s, remote_addr=%s, client_id=%s",
+				packet, client.rwc.RemoteAddr(), client.opts.ClientID)
 		}
 	}
 }
@@ -900,12 +885,8 @@ func (client *client) subscribeHandler(sub *packets.Subscribe) *codes.Error {
 		if code < packets.SubscribeFailure {
 			subRs, err = srv.subscriptionsDB.Subscribe(client.opts.ClientID, sub)
 			if err != nil {
-				zaplog.Error("failed to subscribe topic",
-					zap.String("topic", v.Name),
-					zap.Uint8("qos", v.Qos),
-					zap.String("client_id", client.opts.ClientID),
-					zap.String("remote_addr", client.rwc.RemoteAddr().String()),
-					zap.Error(err))
+				log.Printf("failed to subscribe to topic  topic=%s, qos=%d, client_id=%s, remote_addr=%s: %v",
+					v.Name, v.Qos, client.opts.ClientID, client.rwc.RemoteAddr(), err)
 				code = packets.SubscribeFailure
 			}
 		}
@@ -914,16 +895,8 @@ func (client *client) subscribeHandler(sub *packets.Subscribe) *codes.Error {
 			if srv.hooks.OnSubscribed != nil {
 				srv.hooks.OnSubscribed(context.Background(), client, sub)
 			}
-			zaplog.Info("subscribe succeeded",
-				zap.String("topic", sub.TopicFilter),
-				zap.Uint8("qos", sub.QoS),
-				zap.Uint8("retain_handling", sub.RetainHandling),
-				zap.Bool("retain_as_published", sub.RetainAsPublished),
-				zap.Bool("no_local", sub.NoLocal),
-				zap.Uint32("id", sub.ID),
-				zap.String("client_id", client.opts.ClientID),
-				zap.String("remote_addr", client.rwc.RemoteAddr().String()),
-			)
+			log.Printf("subscribe succeeded  topic=%s, qos=%d, retain_handling=%d, retain_as_published=%v, no_local=%v, id=%d, client_id=%s, remote_addr=%s",
+				sub.TopicFilter, sub.QoS, sub.RetainHandling, sub.RetainAsPublished, sub.NoLocal, sub.ID, client.opts.ClientID, client.rwc.RemoteAddr())
 			// The spec does not specify whether the retain message should follow the 'no-local' option rule.
 			// Gmqtt follows the mosquitto implementation which will send retain messages to no-local subscriptions.
 			// For details: https://github.com/eclipse/mosquitto/issues/1796
@@ -960,12 +933,9 @@ func (client *client) subscribeHandler(sub *packets.Subscribe) *codes.Error {
 				}
 			}
 		} else {
-			zaplog.Info("subscribe failed",
-				zap.String("topic", sub.TopicFilter),
-				zap.Uint8("qos", suback.Payload[k]),
-				zap.String("client_id", client.opts.ClientID),
-				zap.String("remote_addr", client.rwc.RemoteAddr().String()),
-			)
+			log.Printf("subscribe failed  topic=%s, qos=%d, client_id=%s, remote_addr=%s",
+				sub.TopicFilter, suback.Payload[k], client.opts.ClientID, client.rwc.RemoteAddr())
+
 		}
 	}
 	client.write(suback)
@@ -1097,10 +1067,8 @@ func (client *client) pubackHandler(puback *packets.Puback) *codes.Error {
 		return converError(err)
 	}
 	client.pl.release(puback.PacketID)
-	if ce := zaplog.Check(zapcore.DebugLevel, "unset inflight"); ce != nil {
-		ce.Write(zap.String("clientID", client.opts.ClientID),
-			zap.Uint16("pid", puback.PacketID),
-		)
+	if client.config.DumpPacket {
+		log.Printf("unset inflight  clientID=%s, pid=%d", client.opts.ClientID, puback.PacketID)
 	}
 	return nil
 }
@@ -1200,17 +1168,11 @@ func (client *client) unsubscribeHandler(unSub *packets.Unsubscribe) {
 			if srv.hooks.OnUnsubscribed != nil {
 				srv.hooks.OnUnsubscribed(context.Background(), client, topicName)
 			}
-			zaplog.Info("unsubscribed succeed",
-				zap.String("topic", topicName),
-				zap.String("client_id", client.opts.ClientID),
-				zap.String("remote_addr", client.rwc.RemoteAddr().String()),
-			)
+			log.Printf("unsubscribe succeeded  topic=%s, client_id=%s, remote_addr=%s",
+				topicName, client.opts.ClientID, client.rwc.RemoteAddr())
 		} else {
-			zaplog.Info("unsubscribed failed",
-				zap.String("topic", topicName),
-				zap.String("client_id", client.opts.ClientID),
-				zap.String("remote_addr", client.rwc.RemoteAddr().String()),
-				zap.Uint8("code", code))
+			log.Printf("unsubscribe failed  topic=%s, client_id=%s, remote_addr=%s, code=%d",
+				topicName, client.opts.ClientID, client.rwc.RemoteAddr(), code)
 		}
 		cs[k] = code
 
@@ -1265,9 +1227,8 @@ func (client *client) disconnectHandler(dis *packets.Disconnect) *codes.Error {
 		if disExpiry != 0 {
 			err := client.server.sessionStore.SetSessionExpiry(sess.ClientID, disExpiry)
 			if err != nil {
-				zaplog.Error("fail to set session expiry",
-					zap.String("client_id", client.opts.ClientID),
-					zap.Error(err))
+				log.Printf("failed to set session expiry client_id=%s: %v",
+					client.opts.ClientID, err)
 			}
 		}
 	}
@@ -1466,7 +1427,8 @@ func (client *client) serve() {
 	if client.queueStore != nil {
 		qerr := client.queueStore.Close()
 		if qerr != nil {
-			zaplog.Error("fail to close message queue", zap.String("client_id", client.opts.ClientID), zap.Error(qerr))
+			log.Printf("failed to close message queue  client_id=%s: %v",
+				client.opts.ClientID, qerr)
 		}
 	}
 	if client.pl != nil {

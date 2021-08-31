@@ -4,14 +4,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	"math/rand"
 	"net"
 	"strings"
 	"sync"
 	"sync/atomic"
 	"time"
-
-	"go.uber.org/zap"
 
 	"github.com/lab5e/lmqtt/config"
 	"github.com/lab5e/lmqtt/persistence/queue"
@@ -60,18 +59,6 @@ const (
 	serverStatusInit = iota
 	serverStatusStarted
 )
-
-var zaplog *zap.Logger
-
-func init() {
-	zaplog = zap.NewNop()
-}
-
-// LoggerWithField release fields to a new logger.
-// Plugins can use this method to release plugin name field.
-func LoggerWithField(fields ...zap.Field) *zap.Logger {
-	return zaplog.With(fields...)
-}
 
 // Server interface represents a mqtt server instance.
 type Server interface {
@@ -140,7 +127,7 @@ func (c *clientService) TerminateSession(clientID string) {
 		err := c.srv.sessionTerminatedLocked(clientID, NormalTermination)
 		if err != nil {
 			err = fmt.Errorf("session terminated fail: %s", err.Error())
-			zaplog.Error("session terminated fail", zap.Error(err))
+			log.Printf("session terminated fail: %v", err)
 		}
 	}
 
@@ -275,9 +262,8 @@ func (srv *server) lockDuplicatedID(c *client) (oldSession *entities.Session, er
 		oldSession, err = srv.sessionStore.Get(c.opts.ClientID)
 		if err != nil {
 			srv.mu.Unlock()
-			zaplog.Error("fail to get session",
-				zap.String("remote_addr", c.rwc.RemoteAddr().String()),
-				zap.String("client_id", c.opts.ClientID))
+			log.Printf("failed to get session  remote_addr=%s, client_id=%s: %v",
+				c.rwc.RemoteAddr(), c.opts.ClientID, err)
 			return
 		}
 		if oldSession != nil {
@@ -288,10 +274,8 @@ func (srv *server) lockDuplicatedID(c *client) (oldSession *entities.Session, er
 				break
 			}
 			// if there is a duplicated online client, close if first.
-			zaplog.Info("logging with duplicate ClientID",
-				zap.String("remote", c.rwc.RemoteAddr().String()),
-				zap.String("client_id", oldSession.ClientID),
-			)
+			log.Printf("logging with duplicate client ID: remote_addr=%s, client_id=%s",
+				c.rwc.RemoteAddr(), oldSession.ClientID)
 			oldClient.setError(codes.NewError(codes.SessionTakenOver))
 			oldClient.Close()
 			<-oldClient.closed
@@ -386,8 +370,8 @@ func (srv *server) registerClient(connect *packets.Connect, client *client) (ses
 		if !sessionResume {
 			err = srv.sessionTerminatedLocked(oldSession.ClientID, TakenOverTermination)
 			if err != nil {
+				log.Printf("session terminate failed: %v", err)
 				err = fmt.Errorf("session terminated fail: %w", err)
-				zaplog.Error("session terminated fail", zap.Error(err))
 			}
 			// Send will message because the previous session is ended.
 			if w, ok := srv.willMessage[client.opts.ClientID]; ok {
@@ -417,13 +401,11 @@ func (srv *server) registerClient(connect *packets.Connect, client *client) (ses
 				// This could happen if backend store loss some data which will bring the session into "inconsistent state".
 				// We should create a new session and prevent the client reuse the inconsistent one.
 				sessionResume = false
-				zaplog.Error("detect inconsistent session state",
-					zap.String("remote_addr", client.rwc.RemoteAddr().String()),
-					zap.String("client_id", client.opts.ClientID))
+				log.Printf("detected inconsistent session state  remote_addr=%s, client_id=%s",
+					client.rwc.RemoteAddr(), client.opts.ClientID)
 			} else {
-				zaplog.Info("logged in with session reuse",
-					zap.String("remote_addr", client.rwc.RemoteAddr().String()),
-					zap.String("client_id", client.opts.ClientID))
+				log.Printf("logged in with reused session remote_addr=%s, client_id=%s",
+					client.rwc.RemoteAddr(), client.opts.ClientID)
 			}
 
 		}
@@ -453,10 +435,8 @@ func (srv *server) registerClient(connect *packets.Connect, client *client) (ses
 		if err != nil {
 			return
 		}
-		zaplog.Info("logged in with new session",
-			zap.String("remote_addr", client.rwc.RemoteAddr().String()),
-			zap.String("client_id", client.opts.ClientID),
-		)
+		log.Printf("logged in with new session  remote_addr=%s, client_id=%s",
+			client.rwc.RemoteAddr(), client.opts.ClientID)
 	}
 	delete(srv.offlineClients, client.opts.ClientID)
 	return
@@ -547,23 +527,16 @@ func (srv *server) unregisterClient(client *client) {
 			expiredTime := now.Add(time.Duration(sess.ExpiryInterval) * time.Second)
 			srv.offlineClients[client.opts.ClientID] = expiredTime
 			delete(srv.clients, client.opts.ClientID)
-			zaplog.Info("logged out and storing session",
-				zap.String("remote_addr", client.rwc.RemoteAddr().String()),
-				zap.String("client_id", client.opts.ClientID),
-				zap.Time("expired_at", expiredTime),
-			)
+			log.Printf("logged out and storing session  remote_addr=%s, client_id=%s, expired_at=%s",
+				client.rwc.RemoteAddr(), client.opts.ClientID, expiredTime)
 			return
 		}
 	} else {
-		zaplog.Error("fail to get session",
-			zap.String("remote_addr", client.rwc.RemoteAddr().String()),
-			zap.String("client_id", client.opts.ClientID),
-			zap.Error(err))
+		log.Printf("failed to get session  remote_addr=%s, client_id=%s: %v",
+			client.rwc.RemoteAddr(), client.opts.ClientID, err)
 	}
-	zaplog.Info("logged out and cleaning session",
-		zap.String("remote_addr", client.rwc.RemoteAddr().String()),
-		zap.String("client_id", client.opts.ClientID),
-	)
+	log.Printf("logged out and cleaning session  remote_addr=%s, client_id=%s",
+		client.rwc.RemoteAddr(), client.opts.ClientID)
 	_ = srv.sessionTerminatedLocked(client.opts.ClientID, NormalTermination)
 }
 
@@ -720,27 +693,23 @@ func (srv *server) removeSessionLocked(clientID string) (err error) {
 	if qs := srv.queueStore[clientID]; qs != nil {
 		queueErr = qs.Clean()
 		if queueErr != nil {
-			zaplog.Error("fail to clean message queue",
-				zap.String("client_id", clientID),
-				zap.Error(queueErr))
+			log.Printf("failed to clen message queue  client_id=%s: %v",
+				clientID, queueErr)
 			errs = append(errs, "fail to clean message queue: "+queueErr.Error())
 		}
 		delete(srv.queueStore, clientID)
 	}
 	sessionErr = srv.sessionStore.Remove(clientID)
 	if sessionErr != nil {
-		zaplog.Error("fail to remove session",
-			zap.String("client_id", clientID),
-			zap.Error(sessionErr))
+		log.Printf("failed to remove session  client_id=%s: %v",
+			clientID, sessionErr)
 
 		errs = append(errs, "fail to remove session: "+sessionErr.Error())
 	}
 	subErr = srv.subscriptionsDB.UnsubscribeAll(clientID)
 	if subErr != nil {
-		zaplog.Error("fail to remove subscription",
-			zap.String("client_id", clientID),
-			zap.Error(subErr))
-
+		log.Printf("failed to remove subscription  client_id=%s: %v",
+			clientID, subErr)
 		errs = append(errs, "fail to remove subscription: "+subErr.Error())
 	}
 
@@ -757,7 +726,7 @@ func (srv *server) sessionExpireCheck() {
 	srv.mu.Lock()
 	for cid, expiredTime := range srv.offlineClients {
 		if now.After(expiredTime) {
-			zaplog.Info("session expired", zap.String("client_id", cid))
+			log.Printf("session expired  client_id=%s", cid)
 			_ = srv.sessionTerminatedLocked(cid, ExpiredTermination)
 
 		}
@@ -827,7 +796,7 @@ func (srv *server) init(opts ...Options) (err error) {
 	if err != nil {
 		return err
 	}
-	zaplog.Info("open persistence succeeded", zap.String("type", peType))
+	log.Printf("open persistence suceeded type=%s", peType)
 	srv.persistence = pe
 
 	srv.subscriptionsDB, err = srv.persistence.NewSubscriptionStore(srv.config)
@@ -850,7 +819,7 @@ func (srv *server) init(opts ...Options) (err error) {
 	if err != nil {
 		return err
 	}
-	zaplog.Info("init session store succeeded", zap.String("type", peType), zap.Int("session_total", len(cids)))
+	log.Printf("init session store succeeded  type=%s, session_total=%d", peType, len(cids))
 
 	srv.statsManager = newStatsManager(srv.subscriptionsDB)
 	srv.clientService = &clientService{
@@ -873,8 +842,9 @@ func (srv *server) init(opts ...Options) (err error) {
 		}
 		srv.unackStore[v.ClientID] = ua
 	}
-	zaplog.Info("init queue store succeeded", zap.String("type", peType), zap.Int("session_total", len(cids)))
-	zaplog.Info("init subscription store succeeded", zap.String("type", peType), zap.Int("client_total", len(cids)))
+
+	log.Printf("init queue store succeeded  type=%s, session_total=%d", peType, len(cids))
+
 	err = srv.subscriptionsDB.Init(cids)
 	if err != nil {
 		return err
@@ -934,7 +904,7 @@ func (srv *server) serveTCP(l net.Listener) {
 		}
 		client, err := srv.newClient(rw)
 		if err != nil {
-			zaplog.Error("new client fail", zap.Error(err))
+			log.Printf("new client fail: %v", err)
 			return
 		}
 		go client.serve()
@@ -987,11 +957,10 @@ func (srv *server) Run() (err error) {
 		return err
 	}
 	var tcps []string
-	var ws []string
 	for _, v := range srv.tcpListener {
 		tcps = append(tcps, v.Addr().String())
 	}
-	zaplog.Info("gmqtt server started", zap.Strings("tcp server listen on", tcps), zap.Strings("websocket server listen on", ws))
+	log.Printf("lmqtt server started  listen=%v", tcps)
 
 	srv.status = serverStatusStarted
 	srv.wg.Add(1)
@@ -1012,10 +981,10 @@ func (srv *server) Run() (err error) {
 func (srv *server) Stop(ctx context.Context) error {
 	var err error
 	srv.stopOnce.Do(func() {
-		zaplog.Info("stopping gmqtt server")
+		log.Printf("stopping lmqtt server")
 		defer func() {
 			defer close(srv.exitedChan)
-			zaplog.Info("server stopped")
+			log.Printf("server stopped")
 		}()
 
 		for _, l := range srv.tcpListener {
@@ -1045,7 +1014,7 @@ func (srv *server) Stop(ctx context.Context) error {
 		}
 		select {
 		case <-ctx.Done():
-			zaplog.Warn("server stop timeout, force exit", zap.String("error", ctx.Err().Error()))
+			log.Printf("server stop timeout, forcing exit: %v", ctx.Err())
 			err = ctx.Err()
 			return
 		case <-done:

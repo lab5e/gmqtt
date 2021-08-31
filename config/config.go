@@ -3,11 +3,8 @@ package config
 import (
 	"fmt"
 	"io/ioutil"
-	"os"
 	"path"
 
-	"go.uber.org/zap"
-	"go.uber.org/zap/zapcore"
 	"gopkg.in/yaml.v2"
 )
 
@@ -89,6 +86,7 @@ type Config struct {
 	ConfigDir         string            `yaml:"config_dir"`
 	Persistence       Persistence       `yaml:"persistence"`
 	TopicAliasManager TopicAliasManager `yaml:"topic_alias_manager"`
+	DumpPacket        bool              `yaml:"dump_packet"`
 }
 
 type GRPC struct {
@@ -160,22 +158,4 @@ func ParseConfig(filePath string) (c Config, err error) {
 		return Config{}, err
 	}
 	return c, err
-}
-
-func (c Config) GetLogger(config LogConfig) (l *zap.Logger, err error) {
-	var logLevel zapcore.Level
-	err = logLevel.UnmarshalText([]byte(config.Level))
-	if err != nil {
-		return
-	}
-	var core zapcore.Core
-	if config.Format == "json" {
-		core = zapcore.NewCore(zapcore.NewJSONEncoder(zap.NewProductionEncoderConfig()), os.Stdout, logLevel)
-	}
-	if config.Format == "text" {
-		core = zapcore.NewCore(zapcore.NewConsoleEncoder(zap.NewDevelopmentEncoderConfig()), os.Stdout, logLevel)
-	}
-
-	zaplog := zap.New(core, zap.AddStacktrace(zap.ErrorLevel), zap.AddCaller())
-	return zaplog, nil
 }

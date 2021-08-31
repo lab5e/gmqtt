@@ -5,10 +5,7 @@ import (
 	"sync"
 	"time"
 
-	"go.uber.org/zap"
-
 	"github.com/lab5e/lmqtt/persistence/queue"
-	"github.com/lab5e/lmqtt/pkg/lmqtt"
 	"github.com/lab5e/lmqtt/pkg/packets"
 )
 
@@ -33,7 +30,6 @@ type Queue struct {
 	closed          bool
 	// max is the maximum queue length
 	max            int
-	log            *zap.Logger
 	inflightExpiry time.Duration
 	notifier       queue.Notifier
 }
@@ -46,7 +42,6 @@ func New(opts Options) (*Queue, error) {
 		max:            opts.MaxQueuedMsg,
 		inflightExpiry: opts.InflightExpiry,
 		notifier:       opts.DefaultNotifier,
-		log:            lmqtt.LoggerWithField(zap.String("queue", "memory")),
 	}, nil
 }
 

@@ -3,12 +3,11 @@ module github.com/lab5e/lmqtt
 go 1.14
 
 require (
+	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/golang/mock v1.4.4
+	github.com/kr/pretty v0.1.0 // indirect
 	github.com/pkg/errors v0.8.1
 	github.com/stretchr/testify v1.6.1
-	go.uber.org/zap v1.13.0
-	golang.org/x/mod v0.5.0 // indirect
-	golang.org/x/sys v0.0.0-20210823070655-63515b42dcdf
-	golang.org/x/tools v0.1.5 // indirect
+	gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127 // indirect
 	gopkg.in/yaml.v2 v2.2.5
 )

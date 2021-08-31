@@ -3,8 +3,6 @@ package lmqtt
 import (
 	"net"
 
-	"go.uber.org/zap"
-
 	"github.com/lab5e/lmqtt/config"
 )
 
@@ -28,11 +26,5 @@ func WithTCPListener(lns ...net.Listener) Options {
 func WithHook(hooks Hooks) Options {
 	return func(srv *server) {
 		srv.hooks = hooks
-	}
-}
-
-func WithLogger(logger *zap.Logger) Options {
-	return func(srv *server) {
-		zaplog = logger
 	}
 }
