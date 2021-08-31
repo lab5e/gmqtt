@@ -7,6 +7,7 @@ import (
 
 var _ unack.Store = (*Store)(nil)
 
+// Store is the memory store implementation for the unack store
 type Store struct {
 	clientID     string
 	unackpublish map[packets.PacketID]struct{}

@@ -221,7 +221,7 @@ func (db *TrieDB) Iterate(fn subscription.IterateFn, options subscription.Iterat
 	db.IterateLocked(fn, options)
 }
 
-// GetStats is the non thread-safe version of GetStats
+// GetStatusLocked is the non thread-safe version of GetStats
 func (db *TrieDB) GetStatusLocked() subscription.Stats {
 	return db.stats
 }

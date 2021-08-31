@@ -11,7 +11,7 @@ import (
 	"github.com/lab5e/lmqtt/pkg/persistence/session"
 )
 
-func TestSuite(t *testing.T, store session.Store) {
+func Suite(t *testing.T, store session.Store) {
 	a := assert.New(t)
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()

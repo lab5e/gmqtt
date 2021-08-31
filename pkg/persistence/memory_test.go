@@ -22,13 +22,13 @@ type MemorySuite struct {
 
 func (s *MemorySuite) TestQueue() {
 	a := assert.New(s.T())
-	qs, err := s.p.NewQueueStore(queue_test.TestServerConfig, queue_test.TestNotifier, queue_test.TestClientID)
+	qs, err := s.p.NewQueueStore(queue_test.ServerConfig, queue_test.Notifier, queue_test.ClientID)
 	a.Nil(err)
 	queue_test.TestQueue(s.T(), qs)
 }
 func (s *MemorySuite) TestSubscription() {
 	newFn := func() subscription.Store {
-		st, err := s.p.NewSubscriptionStore(queue_test.TestServerConfig)
+		st, err := s.p.NewSubscriptionStore(queue_test.ServerConfig)
 		if err != nil {
 			panic(err)
 		}
@@ -39,16 +39,16 @@ func (s *MemorySuite) TestSubscription() {
 
 func (s *MemorySuite) TestSession() {
 	a := assert.New(s.T())
-	st, err := s.p.NewSessionStore(queue_test.TestServerConfig)
+	st, err := s.p.NewSessionStore(queue_test.ServerConfig)
 	a.Nil(err)
-	sess_test.TestSuite(s.T(), st)
+	sess_test.Suite(s.T(), st)
 }
 
 func (s *MemorySuite) TestUnack() {
 	a := assert.New(s.T())
 	st, err := s.p.NewUnackStore(unack_test.ServerConfig, unack_test.ClientID)
 	a.Nil(err)
-	unack_test.TestSuite(s.T(), st)
+	unack_test.Suite(s.T(), st)
 }
 
 func TestMemory(t *testing.T) {

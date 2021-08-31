@@ -16,15 +16,14 @@ import (
 )
 
 var (
-	TestServerConfig = config.Config{
+	ServerConfig = config.Config{
 		MQTT: config.MQTT{
 			MaxQueuedMsg:   5,
 			InflightExpiry: 2 * time.Second,
 		},
 	}
-	cid          = "cid"
-	TestClientID = cid
-	TestNotifier = &testNotifier{}
+	ClientID = "cid"
+	Notifier = &testNotifier{}
 )
 
 type testNotifier struct {
@@ -54,13 +53,13 @@ func (t *testNotifier) NotifyMsgQueueAdded(delta int) {
 }
 
 func initDrop() {
-	TestNotifier.dropElem = nil
-	TestNotifier.dropErr = nil
+	Notifier.dropElem = nil
+	Notifier.dropErr = nil
 }
 
 func initNotifierLen() {
-	TestNotifier.inflightLen = 0
-	TestNotifier.msgQueueLen = 0
+	Notifier.inflightLen = 0
+	Notifier.msgQueueLen = 0
 }
 
 func assertMsgEqual(a *assert.Assertions, expected, actual *queue.Elem) {
@@ -73,8 +72,8 @@ func assertMsgEqual(a *assert.Assertions, expected, actual *queue.Elem) {
 }
 
 func assertQueueLen(a *assert.Assertions, inflightLen, msgQueueLen int) {
-	a.Equal(inflightLen, TestNotifier.inflightLen)
-	a.Equal(msgQueueLen, TestNotifier.msgQueueLen)
+	a.Equal(inflightLen, Notifier.inflightLen)
+	a.Equal(msgQueueLen, Notifier.msgQueueLen)
 }
 
 // 2 inflight message + 3 new message
@@ -149,7 +148,7 @@ func initStore(store queue.Store) error {
 		CleanStart:     true,
 		Version:        packets.Version5,
 		ReadBytesLimit: 100,
-		Notifier:       TestNotifier,
+		Notifier:       Notifier,
 	})
 }
 
@@ -164,26 +163,26 @@ func add(store queue.Store) error {
 			return err
 		}
 	}
-	TestNotifier.inflightLen = 2
+	Notifier.inflightLen = 2
 	return nil
 }
 
 func assertDrop(a *assert.Assertions, elem *queue.Elem, err error) {
-	a.Len(TestNotifier.dropElem, 1)
+	a.Len(Notifier.dropElem, 1)
 	switch elem.MessageWithID.(type) {
 	case *queue.Publish:
-		actual := TestNotifier.dropElem[0].MessageWithID.(*queue.Publish)
+		actual := Notifier.dropElem[0].MessageWithID.(*queue.Publish)
 		pub := elem.MessageWithID.(*queue.Publish)
 		a.Equal(pub.Message.Topic, actual.Topic)
 		a.Equal(pub.Message.QoS, actual.QoS)
 		a.Equal(pub.Payload, actual.Payload)
 		a.Equal(pub.PacketID, actual.PacketID)
-		a.Equal(err, TestNotifier.dropErr)
+		a.Equal(err, Notifier.dropErr)
 	case *queue.Pubrel:
-		actual := TestNotifier.dropElem[0].MessageWithID.(*queue.Pubrel)
+		actual := Notifier.dropElem[0].MessageWithID.(*queue.Pubrel)
 		pubrel := elem.MessageWithID.(*queue.Pubrel)
 		a.Equal(pubrel.PacketID, actual.PacketID)
-		a.Equal(err, TestNotifier.dropErr)
+		a.Equal(err, Notifier.dropErr)
 	default:
 		a.FailNow("unexpected elem type")
 
@@ -197,7 +196,7 @@ func reconnect(a *assert.Assertions, cleanStart bool, store queue.Store) {
 		CleanStart:     cleanStart,
 		Version:        packets.Version5,
 		ReadBytesLimit: 100,
-		Notifier:       TestNotifier,
+		Notifier:       Notifier,
 	}))
 }
 
@@ -221,7 +220,7 @@ func TestQueue(t *testing.T, store queue.Store) {
 
 func testDrop(a *assert.Assertions, store queue.Store) {
 	// wait inflight messages to expire
-	time.Sleep(TestServerConfig.MQTT.InflightExpiry)
+	time.Sleep(ServerConfig.MQTT.InflightExpiry)
 	for i := 0; i < 3; i++ {
 		err := store.Add(&queue.Elem{
 			At:     time.Now(),
@@ -398,7 +397,7 @@ func testDrop(a *assert.Assertions, store queue.Store) {
 
 	expiredPub := &queue.Elem{
 		At:     time.Now(),
-		Expiry: time.Now().Add(TestServerConfig.MQTT.InflightExpiry),
+		Expiry: time.Now().Add(ServerConfig.MQTT.InflightExpiry),
 		MessageWithID: &queue.Publish{
 			Message: &entities.Message{
 				Dup:      false,
@@ -464,7 +463,7 @@ func testDrop(a *assert.Assertions, store queue.Store) {
 	// queue:  0(qos1/t_qos1), 0(qos1/t), 0(qos1/t1)
 	assertQueueLen(a, 0, 3)
 	// wait qos1/t to expire.
-	time.Sleep(TestServerConfig.MQTT.InflightExpiry)
+	time.Sleep(ServerConfig.MQTT.InflightExpiry)
 	e, err = store.Read([]packets.PacketID{1, 2, 3})
 	a.NoError(err)
 	a.Len(e, 2)
@@ -581,7 +580,7 @@ func testReplace(a *assert.Assertions, store queue.Store) {
 	a.False(r)
 	a.NoError(err)
 	a.NoError(store.Add(elems[2]))
-	TestNotifier.inflightLen++
+	Notifier.inflightLen++
 	// queue: 1(qos2-pubrel),2(qos2), 3(qos2)
 
 	r, err = store.Replace(&queue.Elem{

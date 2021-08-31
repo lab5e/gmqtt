@@ -4,6 +4,7 @@ import (
 	"fmt"
 )
 
+// Errors for the various error codes
 var (
 	ErrMalformed = &Error{Code: MalformedPacket}
 	ErrProtocol  = &Error{Code: ProtocolError}
@@ -19,7 +20,7 @@ const (
 	V3NotAuthorized               = 0x05
 )
 
-//  Code
+//  Code is the MQTT reason code
 type Code = byte
 
 //  There are the possible reason Code in v5

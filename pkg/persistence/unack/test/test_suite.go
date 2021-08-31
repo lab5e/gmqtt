@@ -15,7 +15,7 @@ var (
 	ClientID     = "cid"
 )
 
-func TestSuite(t *testing.T, store unack.Store) {
+func Suite(t *testing.T, store unack.Store) {
 	a := assert.New(t)
 	a.Nil(store.Init(false))
 	for i := packets.PacketID(1); i < 10; i++ {
