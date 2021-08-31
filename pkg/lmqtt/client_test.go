@@ -12,7 +12,6 @@ import (
 
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
-	"google.golang.org/protobuf/proto"
 
 	"github.com/lab5e/lmqtt/config"
 	"github.com/lab5e/lmqtt/persistence/queue"
@@ -1431,12 +1430,13 @@ func TestClient_defaultAuthOptions(t *testing.T) {
 	c.config.MQTT.MaxKeepAlive = 20
 	c.config.MQTT.SessionExpiry = 20 * time.Second
 	c.version = packets.Version5
+	expire := uint32(12)
 	conn := &packets.Connect{
 		Version:   packets.Version5,
 		KeepAlive: 100,
 		ClientID:  []byte("cid"),
 		Properties: &packets.Properties{
-			SessionExpiryInterval: proto.Uint32(12),
+			SessionExpiryInterval: &expire,
 		},
 	}
 	opts := c.defaultAuthOptions(conn)
