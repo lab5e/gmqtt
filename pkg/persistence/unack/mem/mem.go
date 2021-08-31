@@ -13,10 +13,12 @@ type Store struct {
 	unackpublish map[packets.PacketID]struct{}
 }
 
+// Options is the options for a memory store
 type Options struct {
 	ClientID string
 }
 
+// New creates a memory-backed unack store
 func New(opts Options) *Store {
 	return &Store{
 		clientID:     opts.ClientID,
@@ -24,6 +26,7 @@ func New(opts Options) *Store {
 	}
 }
 
+// Init initializes the store
 func (s *Store) Init(cleanStart bool) error {
 	if cleanStart {
 		s.unackpublish = make(map[packets.PacketID]struct{})
@@ -31,6 +34,7 @@ func (s *Store) Init(cleanStart bool) error {
 	return nil
 }
 
+// Set sets an unacked packet ID
 func (s *Store) Set(id packets.PacketID) (bool, error) {
 	if _, ok := s.unackpublish[id]; ok {
 		return true, nil
@@ -39,6 +43,7 @@ func (s *Store) Set(id packets.PacketID) (bool, error) {
 	return false, nil
 }
 
+// Remove removes a packed ID from the store
 func (s *Store) Remove(id packets.PacketID) error {
 	delete(s.unackpublish, id)
 	return nil
