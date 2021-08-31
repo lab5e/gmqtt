@@ -9,6 +9,7 @@ import (
 	"github.com/lab5e/lmqtt/pkg/persistence/subscription"
 )
 
+// Hooks are the hooks into the server
 type Hooks struct {
 	OnAccept
 	OnStop
@@ -51,24 +52,16 @@ func (w *WillMsgRequest) Drop() {
 // It provides the ability to modify the message before sending.
 type OnWillPublish func(ctx context.Context, clientID string, req *WillMsgRequest)
 
-type OnWillPublishWrapper func(OnWillPublish) OnWillPublish
-
 // OnWillPublished will be called after the will message has been sent by the client.
 // The msg param is immutable, DO NOT EDIT.
 type OnWillPublished func(ctx context.Context, clientID string, msg *entities.Message)
-
-type OnWillPublishedWrapper func(OnWillPublished) OnWillPublished
 
 // OnAccept will be called after a new connection established in TCP server.
 // If returns false, the connection will be close directly.
 type OnAccept func(ctx context.Context, conn net.Conn) bool
 
-type OnAcceptWrapper func(OnAccept) OnAccept
-
 // OnStop will be called on server.Stop()
 type OnStop func(ctx context.Context)
-
-type OnStopWrapper func(OnStop) OnStop
 
 // SubscribeRequest represents the subscribe request made by a SUBSCRIBE packet.
 type SubscribeRequest struct {
@@ -117,17 +110,11 @@ func (s *SubscribeRequest) SetID(id uint32) *SubscribeRequest {
 // If return an error, the returned error will override the error set in SubscribeRequest.
 type OnSubscribe func(ctx context.Context, client Client, req *SubscribeRequest) error
 
-type OnSubscribeWrapper func(OnSubscribe) OnSubscribe
-
 // OnSubscribed will be called after the topic subscribe successfully
 type OnSubscribed func(ctx context.Context, client Client, subscription *entities.Subscription)
 
-type OnSubscribedWrapper func(OnSubscribed) OnSubscribed
-
 // OnUnsubscribed will be called after the topic has been unsubscribed
 type OnUnsubscribed func(ctx context.Context, client Client, topicName string)
-
-type OnUnsubscribedWrapper func(OnUnsubscribed) OnUnsubscribed
 
 // UnsubscribeRequest is the input param for OnSubscribed hook.
 type UnsubscribeRequest struct {
@@ -158,8 +145,6 @@ func (u *UnsubscribeRequest) Reject(topicName string, err error) {
 // User can use this function to modify and authorize unsubscription.
 // If return an error, the returned error will override the error set in UnsubscribeRequest.
 type OnUnsubscribe func(ctx context.Context, client Client, req *UnsubscribeRequest) error
-
-type OnUnsubscribeWrapper func(OnUnsubscribe) OnUnsubscribe
 
 // OnMsgArrived will be called when receive a Publish packets.It provides the ability to modify the message before topic match process.
 // The return error is for V5 client to provide additional information for diagnostics and will be ignored if the version of used client is V3.
@@ -193,12 +178,8 @@ func (m *MsgArrivedRequest) Drop() {
 	m.Message = nil
 }
 
-type OnMsgArrivedWrapper func(OnMsgArrived) OnMsgArrived
-
 // OnClosed will be called after the tcp connection of the client has been closed
 type OnClosed func(ctx context.Context, client Client, err error)
-
-type OnClosedWrapper func(OnClosed) OnClosed
 
 // AuthOptions provides several options which controls how the server interacts with the client.
 // The default value of these options is defined in the configuration file.
@@ -264,8 +245,6 @@ type ConnectRequest struct {
 	Options *AuthOptions
 }
 
-type OnBasicAuthWrapper func(OnBasicAuth) OnBasicAuth
-
 // OnEnhancedAuth will be called when receive v5 connect packet with auth method property.
 type OnEnhancedAuth func(ctx context.Context, client Client, req *ConnectRequest) (resp *EnhancedAuthResponse, err error)
 
@@ -275,7 +254,6 @@ type EnhancedAuthResponse struct {
 	OnAuth   OnAuth
 	AuthData []byte
 }
-type OnEnhancedAuthWrapper func(OnEnhancedAuth) OnEnhancedAuth
 
 // AuthRequest is the parameters for the OnAuth hook
 type AuthRequest struct {
@@ -291,31 +269,25 @@ type AuthResponse struct {
 	AuthData []byte
 }
 
+// OnAuth is the hook function for the OnAuth callback
 type OnAuth func(ctx context.Context, client Client, req *AuthRequest) (*AuthResponse, error)
 
-type OnReAuthWrapper func(OnReAuth) OnReAuth
-
+// OnReAuth is the hook function for the OnReAuth callback
 type OnReAuth func(ctx context.Context, client Client, auth *packets.Auth) (*AuthResponse, error)
-
-type OnAuthWrapper func(OnAuth) OnAuth
 
 // OnConnected will be called when a mqtt client connect successfully.
 type OnConnected func(ctx context.Context, client Client)
 
-type OnConnectedWrapper func(OnConnected) OnConnected
-
 // OnSessionCreated will be called when new session created.
 type OnSessionCreated func(ctx context.Context, client Client)
-
-type OnSessionCreatedWrapper func(OnSessionCreated) OnSessionCreated
 
 // OnSessionResumed will be called when session resumed.
 type OnSessionResumed func(ctx context.Context, client Client)
 
-type OnSessionResumedWrapper func(OnSessionResumed) OnSessionResumed
-
+// SessionTerminatedReason is the reason code for a session termination
 type SessionTerminatedReason byte
 
+// Session termination reasons
 const (
 	NormalTermination SessionTerminatedReason = iota
 	TakenOverTermination
@@ -325,16 +297,10 @@ const (
 // OnSessionTerminated will be called when session has been terminated.
 type OnSessionTerminated func(ctx context.Context, clientID string, reason SessionTerminatedReason)
 
-type OnSessionTerminatedWrapper func(OnSessionTerminated) OnSessionTerminated
-
 // OnDelivered will be called when publishing a message to a client.
 type OnDelivered func(ctx context.Context, client Client, msg *entities.Message)
-
-type OnDeliveredWrapper func(OnDelivered) OnDelivered
 
 // OnMsgDropped will be called after the Msg dropped.
 // The err indicates the reason of dropping.
 // See: persistence/queue/error.go
 type OnMsgDropped func(ctx context.Context, clientID string, msg *entities.Message, err error)
-
-type OnMsgDroppedWrapper func(OnMsgDropped) OnMsgDropped
