@@ -30,10 +30,12 @@ type TrieDB struct {
 
 }
 
+// Init initializes the database. This a no-op
 func (db *TrieDB) Init(clientIDs []string) error {
 	return nil
 }
 
+// Close closes the database. This is a no-op
 func (db *TrieDB) Close() error {
 	return nil
 }
@@ -215,6 +217,8 @@ func (db *TrieDB) IterateLocked(fn subscription.IterateFn, options subscription.
 		}
 	}
 }
+
+// Iterate iterates on the DB
 func (db *TrieDB) Iterate(fn subscription.IterateFn, options subscription.IterationOptions) {
 	db.RLock()
 	defer db.RUnlock()
@@ -242,6 +246,7 @@ func (db *TrieDB) GetClientStatsLocked(clientID string) (subscription.Stats, err
 	return *stats, nil
 }
 
+// GetClientStats returns the client stats
 func (db *TrieDB) GetClientStats(clientID string) (subscription.Stats, error) {
 	db.RLock()
 	defer db.RUnlock()
@@ -301,7 +306,7 @@ func (db *TrieDB) SubscribeLocked(clientID string, subscriptions ...*entities.Su
 	return rs
 }
 
-// SubscribeLocked add subscriptions for the client
+// Subscribe add subscriptions for the client
 func (db *TrieDB) Subscribe(clientID string, subscriptions ...*entities.Subscription) (subscription.SubscribeResult, error) {
 	db.Lock()
 	defer db.Unlock()
@@ -373,13 +378,4 @@ func (db *TrieDB) UnsubscribeAll(clientID string) error {
 	// user topics
 	db.UnsubscribeAllLocked(clientID)
 	return nil
-}
-
-// getMatchedTopicFilter return a map key by clientID that contain all matched topic for the given topicName.
-func (db *TrieDB) getMatchedTopicFilter(topicName string) subscription.ClientSubscriptions {
-	// system topic
-	if isSystemTopic(topicName) {
-		return db.systemTrie.getMatchedTopicFilter(topicName)
-	}
-	return db.userTrie.getMatchedTopicFilter(topicName)
 }
