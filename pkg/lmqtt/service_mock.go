@@ -11,7 +11,7 @@ import (
 	"github.com/lab5e/lmqtt/persistence/session"
 	"github.com/lab5e/lmqtt/persistence/subscription"
 	"github.com/lab5e/lmqtt/pkg/entities"
-	"github.com/lab5e/lmqtt/retained"
+	"github.com/lab5e/lmqtt/pkg/retained"
 )
 
 // MockPublisher is a mock of Publisher interface

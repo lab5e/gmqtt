@@ -18,11 +18,11 @@ import (
 	"github.com/lab5e/lmqtt/pkg/codes"
 	"github.com/lab5e/lmqtt/pkg/config"
 	"github.com/lab5e/lmqtt/pkg/entities"
-	retained_trie "github.com/lab5e/lmqtt/retained/trie"
+	retained_trie "github.com/lab5e/lmqtt/pkg/retained/trie"
 
 	"github.com/lab5e/lmqtt/persistence/subscription"
 	"github.com/lab5e/lmqtt/pkg/packets"
-	"github.com/lab5e/lmqtt/retained"
+	"github.com/lab5e/lmqtt/pkg/retained"
 )
 
 var (

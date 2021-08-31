@@ -22,7 +22,7 @@ import (
 	"github.com/lab5e/lmqtt/pkg/config"
 	"github.com/lab5e/lmqtt/pkg/entities"
 	"github.com/lab5e/lmqtt/pkg/packets"
-	"github.com/lab5e/lmqtt/retained"
+	"github.com/lab5e/lmqtt/pkg/retained"
 )
 
 type dummyAddr string
