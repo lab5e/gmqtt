@@ -75,7 +75,7 @@ type Stats struct {
 // ClientSubscriptions groups the subscriptions by client id.
 type ClientSubscriptions map[string][]*entities.Subscription
 
-// IterationOptions
+// IterationOptions is the options for iterating on the subscriptions
 type IterationOptions struct {
 	// Type specifies the types of subscription that will be iterated.
 	// For example, if Type = TypeShared | TypeNonShared , then all shared and non-shared subscriptions will be iterated
