@@ -24,6 +24,15 @@ func onStop(ctx context.Context) {
 
 func onSubscribe(ctx context.Context, client lmqtt.Client, req *lmqtt.SubscribeRequest) error {
 	log.Printf("onSubscribe[%s]", client.ClientOptions().ClientID)
+	if req.Subscribe != nil {
+		for _, v := range req.Subscribe.Topics {
+			// This is a test case for the paho.mqtt tests. If the client attempts
+			// to subscribe to this topic it should fail.
+			if v.Name == "test/nosubscribe" {
+				return errors.New("invalid topic")
+			}
+		}
+	}
 	return nil
 }
 
