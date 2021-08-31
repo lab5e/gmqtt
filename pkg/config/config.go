@@ -2,10 +2,6 @@ package config
 
 import (
 	"fmt"
-	"io/ioutil"
-	"path"
-
-	"gopkg.in/yaml.v2"
 )
 
 var (
@@ -18,8 +14,6 @@ type Configuration interface {
 	// Validate validates the configuration.
 	// If returns error, the broker will not start.
 	Validate() error
-	// Unmarshaler defined how to unmarshal YAML into the config structure.
-	yaml.Unmarshaler
 }
 
 // RegisterDefaultPluginConfig registers the default configuration for the given plugin.
@@ -83,21 +77,6 @@ type ListenerConfig struct {
 	*TLSOptions `yaml:"tls"`
 }
 
-// UnmarshalYAML unmarshal YAML from a source
-func (c *Config) UnmarshalYAML(unmarshal func(interface{}) error) error {
-	type config Config
-	raw := config(DefaultConfig())
-	if err := unmarshal(&raw); err != nil {
-		return err
-	}
-	emptyMQTT := MQTT{}
-	if raw.MQTT == emptyMQTT {
-		raw.MQTT = DefaultMQTTConfig
-	}
-	*c = Config(raw)
-	return nil
-}
-
 // Validate validates the config
 func (c Config) Validate() (err error) {
 	err = c.MQTT.Validate()
@@ -109,26 +88,4 @@ func (c Config) Validate() (err error) {
 		return err
 	}
 	return nil
-}
-
-// ParseConfig parses the configuration file
-func ParseConfig(filePath string) (c Config, err error) {
-	if filePath == "" {
-		return DefaultConfig(), nil
-	}
-	b, err := ioutil.ReadFile(filePath)
-	if err != nil {
-		return c, err
-	}
-	c = DefaultConfig()
-	err = yaml.Unmarshal(b, &c)
-	if err != nil {
-		return c, err
-	}
-	c.ConfigDir = path.Dir(filePath)
-	err = c.Validate()
-	if err != nil {
-		return Config{}, err
-	}
-	return c, err
 }
