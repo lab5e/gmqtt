@@ -6,9 +6,9 @@ import (
 	"errors"
 	"time"
 
-	"github.com/lab5e/lmqtt/persistence/encoding"
 	"github.com/lab5e/lmqtt/pkg/entities"
 	"github.com/lab5e/lmqtt/pkg/packets"
+	"github.com/lab5e/lmqtt/pkg/persistence/encoding"
 )
 
 type MessageWithID interface {

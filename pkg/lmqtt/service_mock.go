@@ -8,9 +8,9 @@ import (
 	"reflect"
 
 	"github.com/golang/mock/gomock"
-	"github.com/lab5e/lmqtt/persistence/session"
-	"github.com/lab5e/lmqtt/persistence/subscription"
 	"github.com/lab5e/lmqtt/pkg/entities"
+	"github.com/lab5e/lmqtt/pkg/persistence/session"
+	"github.com/lab5e/lmqtt/pkg/persistence/subscription"
 	"github.com/lab5e/lmqtt/pkg/retained"
 )
 

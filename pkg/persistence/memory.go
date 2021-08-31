@@ -1,16 +1,16 @@
 package persistence
 
 import (
-	"github.com/lab5e/lmqtt/persistence/queue"
-	mem_queue "github.com/lab5e/lmqtt/persistence/queue/mem"
-	"github.com/lab5e/lmqtt/persistence/session"
-	mem_session "github.com/lab5e/lmqtt/persistence/session/mem"
-	"github.com/lab5e/lmqtt/persistence/subscription"
-	mem_sub "github.com/lab5e/lmqtt/persistence/subscription/mem"
-	"github.com/lab5e/lmqtt/persistence/unack"
-	mem_unack "github.com/lab5e/lmqtt/persistence/unack/mem"
 	"github.com/lab5e/lmqtt/pkg/config"
 	"github.com/lab5e/lmqtt/pkg/lmqtt"
+	"github.com/lab5e/lmqtt/pkg/persistence/queue"
+	mem_queue "github.com/lab5e/lmqtt/pkg/persistence/queue/mem"
+	"github.com/lab5e/lmqtt/pkg/persistence/session"
+	mem_session "github.com/lab5e/lmqtt/pkg/persistence/session/mem"
+	"github.com/lab5e/lmqtt/pkg/persistence/subscription"
+	mem_sub "github.com/lab5e/lmqtt/pkg/persistence/subscription/mem"
+	"github.com/lab5e/lmqtt/pkg/persistence/unack"
+	mem_unack "github.com/lab5e/lmqtt/pkg/persistence/unack/mem"
 )
 
 func init() {

@@ -5,8 +5,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/lab5e/lmqtt/persistence/queue"
 	"github.com/lab5e/lmqtt/pkg/packets"
+	"github.com/lab5e/lmqtt/pkg/persistence/queue"
 )
 
 var _ queue.Store = (*Queue)(nil)

@@ -4,8 +4,8 @@ import (
 	"context"
 	"log"
 
-	"github.com/lab5e/lmqtt/persistence/queue"
 	"github.com/lab5e/lmqtt/pkg/entities"
+	"github.com/lab5e/lmqtt/pkg/persistence/queue"
 )
 
 // queueNotifier implements queue.Notifier interface.

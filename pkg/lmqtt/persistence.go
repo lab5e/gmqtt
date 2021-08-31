@@ -1,11 +1,11 @@
 package lmqtt
 
 import (
-	"github.com/lab5e/lmqtt/persistence/queue"
-	"github.com/lab5e/lmqtt/persistence/session"
-	"github.com/lab5e/lmqtt/persistence/subscription"
-	"github.com/lab5e/lmqtt/persistence/unack"
 	"github.com/lab5e/lmqtt/pkg/config"
+	"github.com/lab5e/lmqtt/pkg/persistence/queue"
+	"github.com/lab5e/lmqtt/pkg/persistence/session"
+	"github.com/lab5e/lmqtt/pkg/persistence/subscription"
+	"github.com/lab5e/lmqtt/pkg/persistence/unack"
 )
 
 type NewPersistence func(config config.Config) (Persistence, error)

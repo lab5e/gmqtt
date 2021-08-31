@@ -4,9 +4,9 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"github.com/lab5e/lmqtt/persistence/queue"
-	"github.com/lab5e/lmqtt/persistence/subscription"
 	"github.com/lab5e/lmqtt/pkg/packets"
+	"github.com/lab5e/lmqtt/pkg/persistence/queue"
+	"github.com/lab5e/lmqtt/pkg/persistence/subscription"
 )
 
 type statsManager struct {

@@ -19,14 +19,14 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/lab5e/lmqtt/persistence/queue"
-	"github.com/lab5e/lmqtt/persistence/subscription"
-	"github.com/lab5e/lmqtt/persistence/unack"
 	"github.com/lab5e/lmqtt/pkg/bitmap"
 	"github.com/lab5e/lmqtt/pkg/codes"
 	"github.com/lab5e/lmqtt/pkg/config"
 	"github.com/lab5e/lmqtt/pkg/entities"
 	"github.com/lab5e/lmqtt/pkg/packets"
+	"github.com/lab5e/lmqtt/pkg/persistence/queue"
+	"github.com/lab5e/lmqtt/pkg/persistence/subscription"
+	"github.com/lab5e/lmqtt/pkg/persistence/unack"
 )
 
 // Error
