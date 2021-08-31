@@ -209,7 +209,7 @@ func testGetStatus(t *testing.T, store subscription.Store) {
 
 	a.NoError(store.Unsubscribe("id4", "$share/abc/name4"))
 
-	expectedCurrent -= 1
+	expectedCurrent--
 	stats = store.GetStats()
 	a.EqualValues(expectedTotal, stats.SubscriptionsTotal)
 	a.EqualValues(expectedCurrent, stats.SubscriptionsCurrent)
