@@ -53,6 +53,9 @@ func (c *Connack) Unpack(r io.Reader) error {
 	}
 	bufr := bytes.NewBuffer(restBuffer)
 	sp, err := bufr.ReadByte()
+	if err != nil {
+		return codes.ErrMalformed
+	}
 	if (127 & (sp >> 1)) > 0 {
 		return codes.ErrMalformed
 	}

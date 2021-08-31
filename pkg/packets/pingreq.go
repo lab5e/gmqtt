@@ -1,7 +1,6 @@
 package packets
 
 import (
-	"fmt"
 	"io"
 
 	"github.com/lab5e/lmqtt/pkg/codes"
@@ -13,7 +12,7 @@ type Pingreq struct {
 }
 
 func (p *Pingreq) String() string {
-	return fmt.Sprintf("Pingreq")
+	return "Pingreq"
 }
 
 // NewPingreqPacket returns a Pingreq instance by the given FixHeader and io.Reader

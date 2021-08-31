@@ -351,10 +351,6 @@ func readUint32(r *bytes.Buffer) (uint32, error) {
 	return binary.BigEndian.Uint32(r.Next(4)), nil
 }
 
-func readBinary(r *bytes.Buffer) (b []byte, err error) {
-	return readUTF8String(false, r)
-}
-
 func readUTF8String(mustUTF8 bool, r *bytes.Buffer) (b []byte, err error) {
 	if r.Len() < 2 {
 		return nil, codes.ErrMalformed

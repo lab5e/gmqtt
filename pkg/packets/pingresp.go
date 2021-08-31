@@ -1,7 +1,6 @@
 package packets
 
 import (
-	"fmt"
 	"io"
 
 	"github.com/lab5e/lmqtt/pkg/codes"
@@ -13,7 +12,7 @@ type Pingresp struct {
 }
 
 func (p *Pingresp) String() string {
-	return fmt.Sprintf("Pingresp")
+	return "Pingresp"
 }
 
 // Pack encodes the packet struct into bytes and writes it into io.Writer.
