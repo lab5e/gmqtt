@@ -145,6 +145,7 @@ func DecodeMessageFromBytes(b []byte) (msg *entities.Message, err error) {
 	return DecodeMessage(bytes.NewBuffer(b))
 }
 
+// EncodeSession encodes a session into a byte buffer
 func EncodeSession(sess *entities.Session, b *bytes.Buffer) {
 	WriteString(b, []byte(sess.ClientID))
 	if sess.Will != nil {
@@ -159,6 +160,7 @@ func EncodeSession(sess *entities.Session, b *bytes.Buffer) {
 	WriteUint32(b, sess.ExpiryInterval)
 }
 
+// DecodeSession decodes a session from a byte buffer
 func DecodeSession(b *bytes.Buffer) (sess *entities.Session, err error) {
 	sess = &entities.Session{}
 	cid, err := ReadString(b)
