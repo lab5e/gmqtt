@@ -36,6 +36,7 @@ type Queue struct {
 	notifier       queue.Notifier
 }
 
+// New creates a new memory-backed queue store
 func New(opts Options) (*Queue, error) {
 	return &Queue{
 		clientID:       opts.ClientID,
@@ -47,6 +48,7 @@ func New(opts Options) (*Queue, error) {
 	}, nil
 }
 
+// Close close the queue store
 func (q *Queue) Close() error {
 	q.cond.L.Lock()
 	defer q.cond.L.Unlock()
@@ -55,6 +57,7 @@ func (q *Queue) Close() error {
 	return nil
 }
 
+// Init initializes the queue store
 func (q *Queue) Init(opts *queue.InitOptions) error {
 	q.cond.L.Lock()
 	defer q.cond.L.Unlock()
@@ -71,10 +74,12 @@ func (q *Queue) Init(opts *queue.InitOptions) error {
 	return nil
 }
 
+// Clean is a no-op in this implementation
 func (*Queue) Clean() error {
 	return nil
 }
 
+// Add adds a new element to the queue
 func (q *Queue) Add(elem *queue.Elem) (err error) {
 	now := time.Now()
 	var dropErr error
@@ -157,6 +162,7 @@ func (q *Queue) Add(elem *queue.Elem) (err error) {
 	return nil
 }
 
+// Replace replaces an element in the queue
 func (q *Queue) Replace(elem *queue.Elem) (replaced bool, err error) {
 	q.cond.L.Lock()
 	defer q.cond.L.Unlock()
@@ -170,6 +176,7 @@ func (q *Queue) Replace(elem *queue.Elem) (replaced bool, err error) {
 	return false, nil
 }
 
+// Read reads elements with the specified packed ID
 func (q *Queue) Read(pids []packets.PacketID) (rs []*queue.Elem, err error) {
 	now := time.Now()
 	q.cond.L.Lock()
@@ -231,6 +238,7 @@ func (q *Queue) Read(pids []packets.PacketID) (rs []*queue.Elem, err error) {
 	return rs, nil
 }
 
+// ReadInflight reads inflight elements from the queue
 func (q *Queue) ReadInflight(maxSize uint) (rs []*queue.Elem, err error) {
 	q.cond.L.Lock()
 	defer q.cond.L.Unlock()
@@ -257,6 +265,7 @@ func (q *Queue) ReadInflight(maxSize uint) (rs []*queue.Elem, err error) {
 	return rs, nil
 }
 
+// Remove removes an element from the queue
 func (q *Queue) Remove(pid packets.PacketID) error {
 	q.cond.L.Lock()
 	defer q.cond.L.Unlock()
