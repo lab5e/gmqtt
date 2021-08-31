@@ -71,7 +71,8 @@ func (t *trieDB) GetMatchedMessages(topicFilter string) []*entities.Message {
 	return t.getTrie(topicFilter).getMatchedMessages(topicFilter)
 }
 
-func NewStore() *trieDB {
+// NewStore creates a new Store using a trie tree
+func NewStore() retained.Store {
 	return &trieDB{
 		userTrie:   newTopicTrie(),
 		systemTrie: newTopicTrie(),

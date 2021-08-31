@@ -46,7 +46,7 @@ func (s *MemorySuite) TestSession() {
 
 func (s *MemorySuite) TestUnack() {
 	a := assert.New(s.T())
-	st, err := s.p.NewUnackStore(unack_test.TestServerConfig, unack_test.TestClientID)
+	st, err := s.p.NewUnackStore(unack_test.ServerConfig, unack_test.ClientID)
 	a.Nil(err)
 	unack_test.TestSuite(s.T(), st)
 }

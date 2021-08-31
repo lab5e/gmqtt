@@ -11,9 +11,8 @@ import (
 )
 
 var (
-	TestServerConfig = config.Config{}
-	cid              = "cid"
-	TestClientID     = cid
+	ServerConfig = config.Config{}
+	ClientID     = "cid"
 )
 
 func TestSuite(t *testing.T, store unack.Store) {

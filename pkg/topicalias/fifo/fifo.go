@@ -42,6 +42,7 @@ type aliasElem struct {
 	alias uint16
 }
 
+// Check checks if the message can be published
 func (q *Queue) Check(publish *packets.Publish) (alias uint16, exist bool) {
 	topicName := string(publish.TopicName)
 	// alias exist
