@@ -4,6 +4,7 @@ import (
 	"errors"
 )
 
+// Errors for the queue structure
 var (
 	ErrClosed                   = errors.New("queue has been closed")
 	ErrDropExceedsMaxPacketSize = errors.New("maximum packet size exceeded")

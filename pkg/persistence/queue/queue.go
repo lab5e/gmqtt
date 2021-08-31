@@ -60,6 +60,7 @@ type Store interface {
 	Remove(pid packets.PacketID) error
 }
 
+// Notifier is used to make notifications
 type Notifier interface {
 	// NotifyDropped will be called when the element in the queue is dropped.
 	// The err indicates the reason of why it is dropped.

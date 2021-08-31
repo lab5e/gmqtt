@@ -11,29 +11,38 @@ import (
 	"github.com/lab5e/lmqtt/pkg/persistence/encoding"
 )
 
+// MessageWithID is a message with an ID
 type MessageWithID interface {
 	ID() packets.PacketID
 	SetID(id packets.PacketID)
 }
 
+// Publish is a message type
 type Publish struct {
 	*entities.Message
 }
 
+// ID returns the ID of the element
 func (p *Publish) ID() packets.PacketID {
 	return p.PacketID
 }
+
+// SetID sets the ID for an element
 func (p *Publish) SetID(id packets.PacketID) {
 	p.PacketID = id
 }
 
+// Pubrel is a message type
 type Pubrel struct {
 	PacketID packets.PacketID
 }
 
+// ID returns the ID of the element
 func (p *Pubrel) ID() packets.PacketID {
 	return p.PacketID
 }
+
+// SetID sets the id for the element
 func (p *Pubrel) SetID(id packets.PacketID) {
 	p.PacketID = id
 }
@@ -53,6 +62,7 @@ func (p *Publish) Encode(b *bytes.Buffer) {
 	encoding.EncodeMessage(p.Message, b)
 }
 
+// Decode decodes the publish structure
 func (p *Publish) Decode(b *bytes.Buffer) (err error) {
 	msg, err := encoding.DecodeMessage(b)
 	if err != nil {
@@ -67,6 +77,7 @@ func (p *Pubrel) Encode(b *bytes.Buffer) {
 	encoding.WriteUint16(b, p.PacketID)
 }
 
+// Decode decodes the pubrel structure
 func (p *Pubrel) Decode(b *bytes.Buffer) (err error) {
 	p.PacketID, err = encoding.ReadUint16(b)
 	return
@@ -92,6 +103,7 @@ func (e *Elem) Encode() []byte {
 	return b.Bytes()
 }
 
+// Decode decodes the element
 func (e *Elem) Decode(b []byte) (err error) {
 	if len(b) < 19 {
 		return errors.New("invalid input length")
