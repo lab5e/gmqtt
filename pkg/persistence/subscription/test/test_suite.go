@@ -253,7 +253,8 @@ func testGetClientStats(t *testing.T, store subscription.Store) {
 	a.EqualValues(0, stats.SubscriptionsCurrent)
 }
 
-func TestSuite(t *testing.T, new func() subscription.Store) {
+// Suite runs the test suite for a subscription store
+func Suite(t *testing.T, new func() subscription.Store) {
 	a := assert.New(t)
 	store := new()
 	a.Nil(store.Init(nil))

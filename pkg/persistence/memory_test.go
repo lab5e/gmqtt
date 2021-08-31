@@ -34,7 +34,7 @@ func (s *MemorySuite) TestSubscription() {
 		}
 		return st
 	}
-	sub_test.TestSuite(s.T(), newFn)
+	sub_test.Suite(s.T(), newFn)
 }
 
 func (s *MemorySuite) TestSession() {
