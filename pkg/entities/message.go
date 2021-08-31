@@ -4,6 +4,7 @@ import (
 	"github.com/lab5e/lmqtt/pkg/packets"
 )
 
+// Message is the message exchanged between clients and the server in both directions
 type Message struct {
 	Dup      bool
 	QoS      uint8

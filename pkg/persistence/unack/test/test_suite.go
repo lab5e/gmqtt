@@ -17,6 +17,7 @@ var (
 	ClientID = "cid"
 )
 
+// Suite runs tests on an unack.Store implementation
 func Suite(t *testing.T, store unack.Store) {
 	a := assert.New(t)
 	a.Nil(store.Init(false))
