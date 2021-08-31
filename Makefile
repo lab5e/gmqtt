@@ -68,7 +68,6 @@ update-dependencies:
 
 # generate mock code
 generate-mocks:
-	@mockgen -source=config/config.go -destination=./config/config_mock.go -package=config -self_package=github.com/lab5e/lmqtt/config
 	@mockgen -source=persistence/queue/elem.go -destination=./persistence/queue/elem_mock.go -package=queue -self_package=github.com/lab5e/lmqtt/queue
 	@mockgen -source=persistence/queue/queue.go -destination=./persistence/queue/queue_mock.go -package=queue -self_package=github.com/lab5e/lmqtt/queue
 	@mockgen -source=persistence/session/session.go -destination=./persistence/session/session_mock.go -package=session -self_package=github.com/lab5e/lmqtt/session
