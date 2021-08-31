@@ -3,7 +3,7 @@ package fifo
 import (
 	"container/list"
 
-	"github.com/lab5e/lmqtt/config"
+	"github.com/lab5e/lmqtt/pkg/config"
 	"github.com/lab5e/lmqtt/pkg/lmqtt"
 	"github.com/lab5e/lmqtt/pkg/packets"
 )

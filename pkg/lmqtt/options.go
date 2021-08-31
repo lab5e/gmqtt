@@ -3,7 +3,7 @@ package lmqtt
 import (
 	"net"
 
-	"github.com/lab5e/lmqtt/config"
+	"github.com/lab5e/lmqtt/pkg/config"
 )
 
 type Options func(srv *server)

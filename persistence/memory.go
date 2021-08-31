@@ -1,7 +1,6 @@
 package persistence
 
 import (
-	"github.com/lab5e/lmqtt/config"
 	"github.com/lab5e/lmqtt/persistence/queue"
 	mem_queue "github.com/lab5e/lmqtt/persistence/queue/mem"
 	"github.com/lab5e/lmqtt/persistence/session"
@@ -10,6 +9,7 @@ import (
 	mem_sub "github.com/lab5e/lmqtt/persistence/subscription/mem"
 	"github.com/lab5e/lmqtt/persistence/unack"
 	mem_unack "github.com/lab5e/lmqtt/persistence/unack/mem"
+	"github.com/lab5e/lmqtt/pkg/config"
 	"github.com/lab5e/lmqtt/pkg/lmqtt"
 )
 

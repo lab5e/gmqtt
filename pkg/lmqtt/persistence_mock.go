@@ -8,11 +8,11 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
-	config "github.com/lab5e/lmqtt/config"
 	queue "github.com/lab5e/lmqtt/persistence/queue"
 	session "github.com/lab5e/lmqtt/persistence/session"
 	subscription "github.com/lab5e/lmqtt/persistence/subscription"
 	unack "github.com/lab5e/lmqtt/persistence/unack"
+	config "github.com/lab5e/lmqtt/pkg/config"
 )
 
 // MockPersistence is a mock of Persistence interface

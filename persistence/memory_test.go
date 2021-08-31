@@ -6,12 +6,12 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/lab5e/lmqtt/config"
 	queue_test "github.com/lab5e/lmqtt/persistence/queue/test"
 	sess_test "github.com/lab5e/lmqtt/persistence/session/test"
 	"github.com/lab5e/lmqtt/persistence/subscription"
 	sub_test "github.com/lab5e/lmqtt/persistence/subscription/test"
 	unack_test "github.com/lab5e/lmqtt/persistence/unack/test"
+	"github.com/lab5e/lmqtt/pkg/config"
 	"github.com/lab5e/lmqtt/pkg/lmqtt"
 )
 

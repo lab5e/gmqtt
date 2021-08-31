@@ -9,7 +9,7 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
-	config "github.com/lab5e/lmqtt/config"
+	config "github.com/lab5e/lmqtt/pkg/config"
 )
 
 // MockServer is a mock of Server interface
