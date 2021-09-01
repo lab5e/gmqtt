@@ -265,10 +265,15 @@ func (client *client) IsConnected() bool {
 	return client.Status() == Connected
 }
 
+func (client *client) log(fmt string, args ...interface{}) {
+	if client.config.Logging {
+		log.Printf(fmt, args...)
+	}
+}
 func (client *client) setError(err error) {
 	client.errOnce.Do(func() {
 		if err != nil && err != io.EOF {
-			log.Printf("connection lost client_id=%s, remote_addr=%s: %v",
+			client.log("connection lost client_id=%s, remote_addr=%s: %v",
 				client.opts.ClientID, client.rwc.RemoteAddr(), err)
 			client.err = err
 			if client.version == packets.Version5 {
@@ -349,7 +354,7 @@ func (client *client) writeLoop() {
 
 func (client *client) writePacket(packet packets.Packet) error {
 	if client.server.config.DumpPacket {
-		log.Printf("sending packet  packet=%s, remote_addr=%s, client_id=%s",
+		client.log("sending packet  packet=%s, remote_addr=%s, client_id=%s",
 			packet, client.rwc.RemoteAddr(), client.opts.ClientID)
 	}
 	return client.packetWriter.WriteAndFlush(packet)
@@ -393,7 +398,7 @@ func (client *client) readLoop() {
 		packet, err = client.packetReader.ReadPacket()
 		if err != nil {
 			if err != io.EOF && packet != nil {
-				log.Printf("read error packet_type=%s: %v", reflect.TypeOf(packet), err)
+				client.log("read error packet_type=%s stopping read loop: %v", reflect.TypeOf(packet), err)
 			}
 			return
 		}
@@ -411,7 +416,7 @@ func (client *client) readLoop() {
 		<-client.connected
 		srv.statsManager.packetReceived(packet, client.opts.ClientID)
 		if client.server.config.DumpPacket {
-			log.Printf("recevied packet packet=%s, remote_addr=%s, client_id=%s",
+			client.log("recevied packet packet=%s, remote_addr=%s, client_id=%s",
 				packet, client.rwc.RemoteAddr(), client.opts.ClientID)
 		}
 	}
@@ -885,7 +890,7 @@ func (client *client) subscribeHandler(sub *packets.Subscribe) *codes.Error {
 		if code < packets.SubscribeFailure {
 			subRs, err = srv.subscriptionsDB.Subscribe(client.opts.ClientID, sub)
 			if err != nil {
-				log.Printf("failed to subscribe to topic  topic=%s, qos=%d, client_id=%s, remote_addr=%s: %v",
+				client.log("failed to subscribe to topic  topic=%s, qos=%d, client_id=%s, remote_addr=%s: %v",
 					v.Name, v.Qos, client.opts.ClientID, client.rwc.RemoteAddr(), err)
 				code = packets.SubscribeFailure
 			}
@@ -895,8 +900,9 @@ func (client *client) subscribeHandler(sub *packets.Subscribe) *codes.Error {
 			if srv.hooks.OnSubscribed != nil {
 				srv.hooks.OnSubscribed(context.Background(), client, sub)
 			}
-			log.Printf("subscribe succeeded  topic=%s, qos=%d, retain_handling=%d, retain_as_published=%v, no_local=%v, id=%d, client_id=%s, remote_addr=%s",
+			client.log("subscribe succeeded  topic=%s, qos=%d, retain_handling=%d, retain_as_published=%v, no_local=%v, id=%d, client_id=%s, remote_addr=%s",
 				sub.TopicFilter, sub.QoS, sub.RetainHandling, sub.RetainAsPublished, sub.NoLocal, sub.ID, client.opts.ClientID, client.rwc.RemoteAddr())
+
 			// The spec does not specify whether the retain message should follow the 'no-local' option rule.
 			// Gmqtt follows the mosquitto implementation which will send retain messages to no-local subscriptions.
 			// For details: https://github.com/eclipse/mosquitto/issues/1796
@@ -933,9 +939,8 @@ func (client *client) subscribeHandler(sub *packets.Subscribe) *codes.Error {
 				}
 			}
 		} else {
-			log.Printf("subscribe failed  topic=%s, qos=%d, client_id=%s, remote_addr=%s",
+			client.log("subscribe failed  topic=%s, qos=%d, client_id=%s, remote_addr=%s",
 				sub.TopicFilter, suback.Payload[k], client.opts.ClientID, client.rwc.RemoteAddr())
-
 		}
 	}
 	client.write(suback)
@@ -1068,7 +1073,7 @@ func (client *client) pubackHandler(puback *packets.Puback) *codes.Error {
 	}
 	client.pl.release(puback.PacketID)
 	if client.config.DumpPacket {
-		log.Printf("unset inflight  clientID=%s, pid=%d", client.opts.ClientID, puback.PacketID)
+		client.log("unset inflight  clientID=%s, pid=%d", client.opts.ClientID, puback.PacketID)
 	}
 	return nil
 }
@@ -1168,10 +1173,10 @@ func (client *client) unsubscribeHandler(unSub *packets.Unsubscribe) {
 			if srv.hooks.OnUnsubscribed != nil {
 				srv.hooks.OnUnsubscribed(context.Background(), client, topicName)
 			}
-			log.Printf("unsubscribe succeeded  topic=%s, client_id=%s, remote_addr=%s",
+			client.log("unsubscribe succeeded  topic=%s, client_id=%s, remote_addr=%s",
 				topicName, client.opts.ClientID, client.rwc.RemoteAddr())
 		} else {
-			log.Printf("unsubscribe failed  topic=%s, client_id=%s, remote_addr=%s, code=%d",
+			client.log("unsubscribe failed  topic=%s, client_id=%s, remote_addr=%s, code=%d",
 				topicName, client.opts.ClientID, client.rwc.RemoteAddr(), code)
 		}
 		cs[k] = code
@@ -1227,7 +1232,7 @@ func (client *client) disconnectHandler(dis *packets.Disconnect) *codes.Error {
 		if disExpiry != 0 {
 			err := client.server.sessionStore.SetSessionExpiry(sess.ClientID, disExpiry)
 			if err != nil {
-				log.Printf("failed to set session expiry client_id=%s: %v",
+				client.log("failed to set session expiry client_id=%s: %v",
 					client.opts.ClientID, err)
 			}
 		}
@@ -1274,7 +1279,7 @@ func (client *client) readHandle() {
 		case *packets.Unsubscribe:
 			client.unsubscribeHandler(p)
 		case *packets.Disconnect:
-			client.disconnectHandler(p)
+			_ = client.disconnectHandler(p)
 			return
 		case *packets.Auth:
 			auth := p
@@ -1427,7 +1432,7 @@ func (client *client) serve() {
 	if client.queueStore != nil {
 		qerr := client.queueStore.Close()
 		if qerr != nil {
-			log.Printf("failed to close message queue  client_id=%s: %v",
+			client.log("failed to close message queue  client_id=%s: %v",
 				client.opts.ClientID, qerr)
 		}
 	}

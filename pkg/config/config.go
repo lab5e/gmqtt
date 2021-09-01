@@ -49,7 +49,7 @@ var DefaultListeners = []*ListenerConfig{
 	},
 }
 
-// Config is the configration for gmqttd.
+// Config is the configration for the mqtt server.
 type Config struct {
 	Listeners         []*ListenerConfig `yaml:"listeners"`
 	MQTT              MQTT              `yaml:"mqtt,omitempty"`
@@ -57,6 +57,7 @@ type Config struct {
 	Persistence       Persistence       `yaml:"persistence"`
 	TopicAliasManager TopicAliasManager `yaml:"topic_alias_manager"`
 	DumpPacket        bool              `yaml:"dump_packet"`
+	Logging           bool              `yaml:"logging"`
 }
 
 // TLSOptions are the TLS options for the server

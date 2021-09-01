@@ -128,8 +128,7 @@ func (c *clientService) TerminateSession(clientID string) {
 	if _, ok := c.srv.offlineClients[clientID]; ok {
 		err := c.srv.sessionTerminatedLocked(clientID, NormalTermination)
 		if err != nil {
-			err = fmt.Errorf("session terminated fail: %s", err.Error())
-			log.Printf("session terminated fail: %v", err)
+			c.srv.log("session terminated fail: %v", err)
 		}
 	}
 
@@ -173,6 +172,11 @@ type server struct {
 	clientService *clientService
 }
 
+func (srv *server) log(fmt string, args ...interface{}) {
+	if srv.config.Logging {
+		log.Printf(fmt, args...)
+	}
+}
 func (srv *server) RetainedService() RetainedService {
 	return srv.retainedDB
 }
@@ -266,7 +270,7 @@ func (srv *server) lockDuplicatedID(c *client) (oldSession *entities.Session, er
 		oldSession, err = srv.sessionStore.Get(c.opts.ClientID)
 		if err != nil {
 			srv.mu.Unlock()
-			log.Printf("failed to get session  remote_addr=%s, client_id=%s: %v",
+			srv.log("failed to get session  remote_addr=%s, client_id=%s: %v",
 				c.rwc.RemoteAddr(), c.opts.ClientID, err)
 			return
 		}
@@ -278,7 +282,7 @@ func (srv *server) lockDuplicatedID(c *client) (oldSession *entities.Session, er
 				break
 			}
 			// if there is a duplicated online client, close if first.
-			log.Printf("logging with duplicate client ID: remote_addr=%s, client_id=%s",
+			srv.log("logging with duplicate client ID: remote_addr=%s, client_id=%s",
 				c.rwc.RemoteAddr(), oldSession.ClientID)
 			oldClient.setError(codes.NewError(codes.SessionTakenOver))
 			oldClient.Close()
@@ -374,7 +378,7 @@ func (srv *server) registerClient(connect *packets.Connect, client *client) (ses
 		if !sessionResume {
 			err = srv.sessionTerminatedLocked(oldSession.ClientID, TakenOverTermination)
 			if err != nil {
-				log.Printf("session terminate failed: %v", err)
+				srv.log("session terminate failed: %v", err)
 				err = fmt.Errorf("session terminated fail: %w", err)
 			}
 			// Send will message because the previous session is ended.
@@ -405,10 +409,10 @@ func (srv *server) registerClient(connect *packets.Connect, client *client) (ses
 				// This could happen if backend store loss some data which will bring the session into "inconsistent state".
 				// We should create a new session and prevent the client reuse the inconsistent one.
 				sessionResume = false
-				log.Printf("detected inconsistent session state  remote_addr=%s, client_id=%s",
+				srv.log("detected inconsistent session state  remote_addr=%s, client_id=%s",
 					client.rwc.RemoteAddr(), client.opts.ClientID)
 			} else {
-				log.Printf("logged in with reused session remote_addr=%s, client_id=%s",
+				srv.log("logged in with reused session remote_addr=%s, client_id=%s",
 					client.rwc.RemoteAddr(), client.opts.ClientID)
 			}
 
@@ -439,7 +443,7 @@ func (srv *server) registerClient(connect *packets.Connect, client *client) (ses
 		if err != nil {
 			return
 		}
-		log.Printf("logged in with new session  remote_addr=%s, client_id=%s",
+		srv.log("logged in with new session  remote_addr=%s, client_id=%s",
 			client.rwc.RemoteAddr(), client.opts.ClientID)
 	}
 	delete(srv.offlineClients, client.opts.ClientID)
@@ -531,15 +535,15 @@ func (srv *server) unregisterClient(client *client) {
 			expiredTime := now.Add(time.Duration(sess.ExpiryInterval) * time.Second)
 			srv.offlineClients[client.opts.ClientID] = expiredTime
 			delete(srv.clients, client.opts.ClientID)
-			log.Printf("logged out and storing session  remote_addr=%s, client_id=%s, expired_at=%s",
+			srv.log("logged out and storing session  remote_addr=%s, client_id=%s, expired_at=%s",
 				client.rwc.RemoteAddr(), client.opts.ClientID, expiredTime)
 			return
 		}
 	} else {
-		log.Printf("failed to get session  remote_addr=%s, client_id=%s: %v",
+		srv.log("failed to get session  remote_addr=%s, client_id=%s: %v",
 			client.rwc.RemoteAddr(), client.opts.ClientID, err)
 	}
-	log.Printf("logged out and cleaning session  remote_addr=%s, client_id=%s",
+	srv.log("logged out and cleaning session  remote_addr=%s, client_id=%s",
 		client.rwc.RemoteAddr(), client.opts.ClientID)
 	_ = srv.sessionTerminatedLocked(client.opts.ClientID, NormalTermination)
 }
@@ -697,7 +701,7 @@ func (srv *server) removeSessionLocked(clientID string) (err error) {
 	if qs := srv.queueStore[clientID]; qs != nil {
 		queueErr = qs.Clean()
 		if queueErr != nil {
-			log.Printf("failed to clen message queue  client_id=%s: %v",
+			srv.log("failed to clen message queue  client_id=%s: %v",
 				clientID, queueErr)
 			errs = append(errs, "fail to clean message queue: "+queueErr.Error())
 		}
@@ -705,14 +709,14 @@ func (srv *server) removeSessionLocked(clientID string) (err error) {
 	}
 	sessionErr = srv.sessionStore.Remove(clientID)
 	if sessionErr != nil {
-		log.Printf("failed to remove session  client_id=%s: %v",
+		srv.log("failed to remove session  client_id=%s: %v",
 			clientID, sessionErr)
 
 		errs = append(errs, "fail to remove session: "+sessionErr.Error())
 	}
 	subErr = srv.subscriptionsDB.UnsubscribeAll(clientID)
 	if subErr != nil {
-		log.Printf("failed to remove subscription  client_id=%s: %v",
+		srv.log("failed to remove subscription  client_id=%s: %v",
 			clientID, subErr)
 		errs = append(errs, "fail to remove subscription: "+subErr.Error())
 	}
@@ -730,7 +734,7 @@ func (srv *server) sessionExpireCheck() {
 	srv.mu.Lock()
 	for cid, expiredTime := range srv.offlineClients {
 		if now.After(expiredTime) {
-			log.Printf("session expired  client_id=%s", cid)
+			srv.log("session expired  client_id=%s", cid)
 			_ = srv.sessionTerminatedLocked(cid, ExpiredTermination)
 
 		}
@@ -800,7 +804,7 @@ func (srv *server) init(opts ...Options) (err error) {
 	if err != nil {
 		return err
 	}
-	log.Printf("open persistence suceeded type=%s", peType)
+	srv.log("open persistence suceeded type=%s", peType)
 	srv.persistence = pe
 
 	srv.subscriptionsDB, err = srv.persistence.NewSubscriptionStore(srv.config)
@@ -823,7 +827,7 @@ func (srv *server) init(opts ...Options) (err error) {
 	if err != nil {
 		return err
 	}
-	log.Printf("init session store succeeded  type=%s, session_total=%d", peType, len(cids))
+	srv.log("init session store succeeded  type=%s, session_total=%d", peType, len(cids))
 
 	srv.statsManager = newStatsManager(srv.subscriptionsDB)
 	srv.clientService = &clientService{
@@ -847,7 +851,7 @@ func (srv *server) init(opts ...Options) (err error) {
 		srv.unackStore[v.ClientID] = ua
 	}
 
-	log.Printf("init queue store succeeded  type=%s, session_total=%d", peType, len(cids))
+	srv.log("init queue store succeeded  type=%s, session_total=%d", peType, len(cids))
 
 	err = srv.subscriptionsDB.Init(cids)
 	if err != nil {
@@ -908,7 +912,7 @@ func (srv *server) serveTCP(l net.Listener) {
 		}
 		client, err := srv.newClient(rw)
 		if err != nil {
-			log.Printf("new client fail: %v", err)
+			srv.log("new client fail: %v", err)
 			return
 		}
 		go client.serve()
@@ -964,7 +968,7 @@ func (srv *server) Run() (err error) {
 	for _, v := range srv.tcpListener {
 		tcps = append(tcps, v.Addr().String())
 	}
-	log.Printf("lmqtt server started  listen=%v", tcps)
+	srv.log("lmqtt server started  listen=%v", tcps)
 
 	srv.status = serverStatusStarted
 	srv.wg.Add(1)
@@ -985,10 +989,10 @@ func (srv *server) Run() (err error) {
 func (srv *server) Stop(ctx context.Context) error {
 	var err error
 	srv.stopOnce.Do(func() {
-		log.Printf("stopping lmqtt server")
+		srv.log("stopping lmqtt server")
 		defer func() {
 			defer close(srv.exitedChan)
-			log.Printf("server stopped")
+			srv.log("server stopped")
 		}()
 
 		for _, l := range srv.tcpListener {
@@ -1018,7 +1022,7 @@ func (srv *server) Stop(ctx context.Context) error {
 		}
 		select {
 		case <-ctx.Done():
-			log.Printf("server stop timeout, forcing exit: %v", ctx.Err())
+			srv.log("server stop timeout, forcing exit: %v", ctx.Err())
 			err = ctx.Err()
 			return
 		case <-done:

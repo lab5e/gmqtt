@@ -2,7 +2,6 @@ package lmqtt
 
 import (
 	"context"
-	"log"
 
 	"github.com/lab5e/lmqtt/pkg/entities"
 	"github.com/lab5e/lmqtt/pkg/persistence/queue"
@@ -27,7 +26,7 @@ func defaultNotifier(dropHook OnMsgDropped, sts *statsManager, clientID string) 
 
 func (q *queueNotifier) notifyDropped(msg *entities.Message, err error) {
 	cid := q.cli.opts.ClientID
-	log.Printf("message dropped  client_id=%s: %v", cid, err)
+	q.cli.log("message dropped  client_id=%s: %v", cid, err)
 	q.sts.messageDropped(msg.QoS, q.cli.opts.ClientID, err)
 	if q.dropHook != nil {
 		q.dropHook(context.Background(), cid, msg, err)
@@ -42,7 +41,7 @@ func (q *queueNotifier) NotifyDropped(elem *queue.Elem, err error) {
 	if pub, ok := elem.MessageWithID.(*queue.Publish); ok {
 		q.notifyDropped(pub.Message, err)
 	} else {
-		log.Printf("message dropped  client_ud=%s: %v", cid, err)
+		q.cli.log("message dropped  client_ud=%s: %v", cid, err)
 	}
 }
 

@@ -45,7 +45,7 @@ func TestServer_deliverMessage(t *testing.T) {
 		QoS:     2,
 	}
 	srv := ts.srv
-	srv.subscriptionsDB.Subscribe(subscriber, &entities.Subscription{
+	_, _ = srv.subscriptionsDB.Subscribe(subscriber, &entities.Subscription{
 		ShareName:   "",
 		TopicFilter: "/abc",
 		QoS:         1,
@@ -102,7 +102,7 @@ func TestServer_deliverMessage_sharedSubscription(t *testing.T) {
 	}
 	srv := ts.srv
 	// add 2 shared and 2 non-shared subscription which both match the message topic: /abc
-	srv.subscriptionsDB.Subscribe(subscriber, &entities.Subscription{
+	_, _ = srv.subscriptionsDB.Subscribe(subscriber, &entities.Subscription{
 		ShareName:   "abc",
 		TopicFilter: "/abc",
 		QoS:         1,
