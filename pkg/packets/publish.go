@@ -10,13 +10,13 @@ import (
 
 // Publish represents the MQTT Publish  packet
 type Publish struct {
-	Version    Version
-	FixHeader  *FixHeader
-	Dup        bool   //是否重发 [MQTT-3.3.1.-1]
-	Qos        uint8  //qos等级
-	Retain     bool   //是否保留消息
-	TopicName  []byte //主题名
-	PacketID          //报文标识符
+	Version   Version
+	FixHeader *FixHeader
+	Dup       bool  //Resend or not [MQTT-3.3.1.-1]
+	Qos       uint8 //qos
+	Retain    bool
+	TopicName []byte
+	PacketID
 	Payload    []byte
 	Properties *Properties
 }

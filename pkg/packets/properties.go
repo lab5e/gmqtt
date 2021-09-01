@@ -199,7 +199,7 @@ func (p *Properties) PackWillProperties(bufw *bytes.Buffer) {
 	defer func() {
 		b, _ := DecodeRemainLength(newBufw.Len())
 		bufw.Write(b)
-		newBufw.WriteTo(bufw)
+		_, _ = newBufw.WriteTo(bufw)
 	}()
 	if p == nil {
 		return
@@ -226,7 +226,7 @@ func (p *Properties) Pack(bufw *bytes.Buffer, packetType byte) {
 	defer func() {
 		b, _ := DecodeRemainLength(newBufw.Len())
 		bufw.Write(b)
-		newBufw.WriteTo(bufw)
+		_, _ = newBufw.WriteTo(bufw)
 	}()
 	if p == nil {
 		return
