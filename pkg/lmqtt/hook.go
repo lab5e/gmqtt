@@ -30,6 +30,7 @@ type Hooks struct {
 	OnMsgDropped
 	OnWillPublish
 	OnWillPublished
+	OnPublish
 }
 
 // WillMsgRequest is the input param for OnWillPublish hook.
@@ -304,3 +305,7 @@ type OnDelivered func(ctx context.Context, client Client, msg *entities.Message)
 // The err indicates the reason of dropping.
 // See: persistence/queue/error.go
 type OnMsgDropped func(ctx context.Context, clientID string, msg *entities.Message, err error)
+
+// OnPublish will be called prior to publishing packets to clients. If the hook returns false the
+// message won't be published.
+type OnPublish func(ctx context.Context, client Client, msg *entities.Message) bool

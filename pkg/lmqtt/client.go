@@ -309,6 +309,7 @@ func (client *client) writeLoop() {
 		case <-client.close:
 			return
 		case packet := <-client.out:
+
 			switch p := packet.(type) {
 			case *packets.Publish:
 				if client.version == packets.Version5 {
@@ -325,6 +326,14 @@ func (client *client) writeLoop() {
 						}
 					}
 				}
+
+				// OnPublish hook
+				if srv.hooks.OnPublish != nil {
+					if !srv.hooks.OnPublish(context.Background(), client, entities.MessageFromPublish(p)) {
+						return
+					}
+				}
+
 				// OnDelivered hook
 				if srv.hooks.OnDelivered != nil {
 					srv.hooks.OnDelivered(context.Background(), client, entities.MessageFromPublish(p))
