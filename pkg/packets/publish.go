@@ -17,8 +17,9 @@ type Publish struct {
 	Retain    bool
 	TopicName []byte
 	PacketID
-	Payload    []byte
-	Properties *Properties
+	Payload            []byte
+	Properties         *Properties
+	InternalProperties map[string]string
 }
 
 func (p *Publish) String() string {

@@ -21,6 +21,7 @@ type Message struct {
 	ResponseTopic          string
 	SubscriptionIdentifier []uint32
 	UserProperties         []packets.UserProperty
+	InternalProperties     map[string]string
 }
 
 // Copy deep copies the Message and return the new one
@@ -56,6 +57,12 @@ func (m *Message) Copy() *Message {
 
 			newMsg.UserProperties[k].V = make([]byte, len(m.UserProperties[k].V))
 			copy(newMsg.UserProperties[k].V, m.UserProperties[k].V)
+		}
+	}
+	if m.InternalProperties != nil {
+		newMsg.InternalProperties = make(map[string]string)
+		for k, v := range m.InternalProperties {
+			newMsg.InternalProperties[k] = v
 		}
 	}
 	return newMsg
@@ -145,7 +152,12 @@ func MessageFromPublish(p *packets.Publish) *Message {
 			m.ResponseTopic = string(p.Properties.ResponseTopic)
 		}
 		m.UserProperties = p.Properties.User
-
+	}
+	if p.InternalProperties != nil {
+		m.InternalProperties = make(map[string]string)
+		for k, v := range p.InternalProperties {
+			m.InternalProperties[k] = v
+		}
 	}
 	return m
 }
@@ -186,6 +198,12 @@ func MessageToPublish(msg *Message, version packets.Version) *packets.Publish {
 			PayloadFormat:          payloadFormat,
 			User:                   msg.UserProperties,
 			SubscriptionIdentifier: msg.SubscriptionIdentifier,
+		}
+	}
+	if msg.InternalProperties != nil {
+		pub.InternalProperties = make(map[string]string)
+		for k, v := range msg.InternalProperties {
+			pub.InternalProperties[k] = v
 		}
 	}
 	return pub
